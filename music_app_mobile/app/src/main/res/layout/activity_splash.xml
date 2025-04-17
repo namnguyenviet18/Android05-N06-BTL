@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@drawable/splash_gradient"
+    tools:context=".application.activities.SplashActivity">
+
+    <ImageView
+        android:layout_width="113dp"
+        android:layout_height="127dp"
+        android:contentDescription="@string/app_logo"
+        android:src="@drawable/music_logo"
+    />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start Turing Your ideas into Reality"
+        android:textSize="27sp"
+        android:textColor="@color/text_white"
+        android:gravity="center_horizontal"
+        android:textStyle="bold"
+        android:layout_marginVertical="8dp"
+        android:layout_marginHorizontal="30dp"
+    />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Listen to Vii Musicy"
+        android:textSize="24sp"
+        android:textColor="@color/deep_teal"
+        android:gravity="center_horizontal"
+        android:textStyle="bold"
+        android:layout_marginHorizontal="30dp"
+        />
+
+
+
+</LinearLayout>
