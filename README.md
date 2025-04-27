@@ -24,3 +24,7 @@ https://www.figma.com/design/8jFVwZrE4vTUtyQY6CuYmz/music-app-design--Community-
 - Spring Framework (Backend)
 - PostgreSQL (Database)
 
+## 🚀 Thiết kế
+### Thiết kế biểu đồ lớp thực thể
+![Biểu đồ lớp thực thể](./assets/music_app_entiries.jpg)
+
