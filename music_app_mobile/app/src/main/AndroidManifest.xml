@@ -16,6 +16,9 @@
             android:name=".application.activities.LoginActivity"
             android:exported="false" />
         <activity
+            android:name=".application.activities.SignupActivity"
+            android:exported="false" />
+        <activity
             android:name=".application.activities.WelcomeActivity"
             android:exported="false" />
         <activity
