@@ -26,5 +26,20 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         });
+
+        // Set click listener for the "Sign up" text
+        binding.signUpLinkTextView.setOnClickListener(view -> {
+            Intent intent = new Intent(this, SignupActivity.class);
+            startActivity(intent);
+            finish(); // Close the login activity
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Navigate to SignupActivity instead of going back to WelcomeActivity
+        Intent intent = new Intent(this, SignupActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
