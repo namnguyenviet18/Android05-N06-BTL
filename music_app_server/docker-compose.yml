@@ -1,0 +1,31 @@
+services:
+  postgres:
+    container_name: postgres-music-app
+    image: postgres
+    environment:
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+      PGDATA: /var/lib/postgresql/data
+      POSTGRES_DB: music_app_db
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - 5678:5432
+    networks:
+      - music-app
+    restart: unless-stopped
+
+
+  mail-dev:
+    container_name: mail-dev-music-app
+    image: maildev/maildev
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+networks:
+  music-app:
+    driver: bridge
+
+volumes:
+  postgres:
+    driver: local
