@@ -14,4 +14,4 @@
 .cxx
 local.properties
 
-**/ServerDestination.java
+app/src/main/java/com/group06/music_app_mobile/app_utils/ServerDestination.java
