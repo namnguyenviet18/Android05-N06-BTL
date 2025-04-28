@@ -1,0 +1,8 @@
+<resources>
+    <style name="ToolbarTitleStyle">
+        <item name="android:textSize">16sp</item> <!-- Kích thước chữ -->
+        <item name="android:textColor">@color/text_white</item>
+        <item name="android:textStyle">bold</item> <!-- Màu sắc chữ -->
+        <item name="android:gravity">center</item> <!-- Màu sắc chữ -->
+    </style>
+</resources>

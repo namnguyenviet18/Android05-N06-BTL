@@ -11,4 +11,11 @@
         android:layout_height="match_parent"
         android:text="Play" />
 
+    <Button
+        android:id="@+id/button_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Play"
+        android:layout_gravity="center" />
+
 </FrameLayout>
