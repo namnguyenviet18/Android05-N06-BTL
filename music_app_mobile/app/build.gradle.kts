@@ -37,6 +37,8 @@ android {
 }
 
 dependencies {
+    compileOnly("org.projectlombok:lombok:1.18.30") // (chỉ biên dịch)
+    annotationProcessor("org.projectlombok:lombok:1.18.30") // (xử lý annotation)
     implementation(libs.viewpager2)
     implementation(libs.appcompat)
     implementation(libs.material)

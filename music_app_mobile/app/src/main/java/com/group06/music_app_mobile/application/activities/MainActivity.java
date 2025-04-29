@@ -10,6 +10,10 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.group06.music_app_mobile.R;
 import com.group06.music_app_mobile.application.adapters.ViewPagerAdapter;
 import com.group06.music_app_mobile.databinding.ActivityMainBinding;
+import com.group06.music_app_mobile.models.Comment;
+import com.group06.music_app_mobile.models.Song;
+import com.group06.music_app_mobile.models.SongLike;
+import com.group06.music_app_mobile.models.User;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 
     @SuppressLint("NonConstantResourceId")
     private void setUpBottomNav() {
