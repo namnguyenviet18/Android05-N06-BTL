@@ -9,4 +9,6 @@
     <color name="dark_slate">#24242E</color>
     <color name="transparent">#00000000</color>
     <color name="gray">#888888</color>
+    <color name="text_input">#808080</color>
+    <color name="color_mic">#455A64</color>
 </resources>
