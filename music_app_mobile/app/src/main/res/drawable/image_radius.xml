@@ -1,0 +1,4 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+<!-- Màu nền nếu cần -->
+    <corners android:radius="5dp"/>
+</shape>
