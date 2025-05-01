@@ -21,6 +21,8 @@ public class Song extends BaseEntity {
     private String audioUrl;
     private String coverImageUrl;
     private String lyrics;
+    private String fileName;
+    private String fileExtension;
     private long likeCount;
     private long commentCount;
     private List<SongLike> likes;

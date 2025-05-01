@@ -9,4 +9,8 @@
     <color name="dark_slate">#24242E</color>
     <color name="transparent">#00000000</color>
     <color name="gray">#888888</color>
+    <color name="dusty_gray">#8E8E8E</color>
+    <color name="dark_twilight">#181829</color>
+    <color name="light_orange">#FFD580</color>
+
 </resources>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="SongStatisticStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/text_white</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="IconStatisticStyle">
+        <item name="android:layout_width">28dp</item>
+        <item name="android:layout_height">28dp</item>
+        <item name="android:contentDescription">heart_ic</item>
+        <item name="tint">@color/cyan_light</item>
+    </style>
+    <style name="StatisticLayoutStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+    <style name="DurationStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/text_white</item>
+        <item name="android:textSize">11sp</item>
+        <item name="layout_constraintTop_toBottomOf">@id/seekBar</item>
+    </style>
+    <style name="ExpandStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+    <style name="NextAndPreviousStyle">
+        <item name="android:layout_width">17dp</item>
+        <item name="android:layout_height">14dp</item>
+        <item name="android:contentDescription">previous</item>
+        <item name="tint">@color/text_white</item>
+    </style>
+</resources>

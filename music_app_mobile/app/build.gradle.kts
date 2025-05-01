@@ -37,6 +37,10 @@ android {
 }
 
 dependencies {
+    implementation(libs.glide)
+    annotationProcessor(libs.glide.compiler)
+    implementation(libs.retrofit2)
+    implementation(libs.gson)
     compileOnly("org.projectlombok:lombok:1.18.30") // (chỉ biên dịch)
     annotationProcessor("org.projectlombok:lombok:1.18.30") // (xử lý annotation)
     implementation(libs.viewpager2)
