@@ -1,7 +1,9 @@
 package com.group06.music_app_mobile.application.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,6 +16,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private ActivityWelcomeBinding binding;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,12 +26,22 @@ public class WelcomeActivity extends AppCompatActivity {
         boolean isFirstWelcome = getIntent().getBooleanExtra(Constants.IS_FIRST_WELCOME, true);
 
         if (isFirstWelcome) {
-            binding.welcomeButton.setText("NEXT");
+            binding.skipButton.setVisibility(View.VISIBLE);
+            binding.skipButton.setEnabled(true);
+            binding.nextButton.setText("NEXT");
+            binding.logo.setImageResource(R.drawable.welcome_first_logo);
+            binding.titleText.setText("Welcome to the world\nof music");
+            binding.descriptionText.setText("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.");
         } else {
-            binding.welcomeButton.setText("START");
+            binding.nextButton.setText("START");
+            binding.logo.setImageResource(R.drawable.welcome_second_logo);
+            binding.titleText.setText("Download and save your\nFavorite Music");
+            binding.descriptionText.setText("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.");
+            binding.skipButton.setVisibility(View.INVISIBLE);
+            binding.skipButton.setEnabled(false);
         }
 
-        binding.welcomeButton.setOnClickListener(view -> {
+        binding.nextButton.setOnClickListener(view -> {
             if (isFirstWelcome) {
                 Intent intent = new Intent(WelcomeActivity.this, WelcomeActivity.class);
                 intent.putExtra(Constants.IS_FIRST_WELCOME, false);
@@ -40,10 +53,18 @@ public class WelcomeActivity extends AppCompatActivity {
                 /// FALSE
                 /// thì lần sau vào app sẽ vào login | home mà không cần vào welcome nữa
                 /// StorageService.getInstance(this).launchApp();
+                StorageService.getInstance(this).launchApp();
                 Intent intent = new Intent(WelcomeActivity.this, SignupActivity.class);
                 startActivity(intent);
             }
+            finish();
+        });
 
+        binding.skipButton.setOnClickListener(view -> {
+            StorageService.getInstance(this).launchApp();
+            Intent intent = new Intent(WelcomeActivity.this, SignupActivity.class);
+            startActivity(intent);
+            finish();
         });
 
     }
