@@ -17,5 +17,6 @@
     <color name="color_blue_linear_bf">#24CEF0</color>
     <color name="color_blue_linear_af">#24EBCA</color>
     <color name="bg_gray">#5d5d65</color>
-
+    <color name="blue">#29B6F6</color>
+    <color name="orange">#FF6600</color>
 </resources>

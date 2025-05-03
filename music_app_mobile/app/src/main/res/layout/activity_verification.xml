@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#000000"
+    android:gravity="center_horizontal"
+    >
+
+    <!-- Header Gradient -->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/header_gradient" />
+
+    <!-- Change Password Title -->
+    <TextView
+        style="@style/Title"
+        android:layout_marginBottom="8dp"
+        android:text="Verification"/>
+
+    <TextView
+        android:layout_width="209dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:gravity="center"
+        android:text="Messenger has send a code to verify your account"
+        android:textColor="#CCCCCC"
+        android:textSize="14sp" />
+    <!-- Dãy OTP -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_white"
+        android:text="Email OTP"
+        android:layout_marginStart="16dp"
+        android:textSize="20dp"
+        android:layout_marginBottom="8dp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="24dp">
+
+        <EditText
+            android:id="@+id/otpBox1"
+            style="@style/OtpBoxStyle"/>
+        <EditText
+            android:id="@+id/otpBox2"
+            style="@style/OtpBoxStyle"/>
+        <EditText
+            android:id="@+id/otpBox3"
+            style="@style/OtpBoxStyle"/>
+        <EditText
+            android:id="@+id/otpBox4"
+            style="@style/OtpBoxStyle"/>
+        <EditText
+            android:id="@+id/otpBox5"
+            style="@style/OtpBoxStyle"/>
+
+    </LinearLayout>
+    <!-- Change Button -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/changeButton"
+        style="@style/BlueButton"
+        android:layout_marginTop="16dp"
+        android:text="Verify"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Resend : "
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/timerText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:50"
+            android:textColor="@color/orange"
+            android:textSize="14sp"/>
+    </LinearLayout>
+</LinearLayout>

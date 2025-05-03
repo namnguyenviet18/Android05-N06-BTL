@@ -22,6 +22,7 @@ public class LoginActivity extends AppCompatActivity {
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // Set click listener for the Sign In button
         binding.loginButton.setOnClickListener(view -> {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
@@ -32,6 +33,12 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new Intent(this, SignupActivity.class);
             startActivity(intent);
             finish(); // Close the login activity
+        });
+
+        // Set click listener for the "Forgot Password" text
+        binding.forgotPasswordTextView.setOnClickListener(view -> {
+            Intent intent = new Intent(this, ForgotPasswordActivity.class);
+            startActivity(intent);
         });
     }
 
