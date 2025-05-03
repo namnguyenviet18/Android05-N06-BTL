@@ -1,14 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/app_background"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="30dp"
     tools:context=".application.fragments.FavoriteFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Favorite" />
+    <!-- Header Section with Profile Image, Like, and More Buttons -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/profileImage"
+        android:layout_width="145dp"
+        android:layout_height="145dp"
+        app:cardCornerRadius="72.5dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-</FrameLayout>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ana" />
+    </androidx.cardview.widget.CardView>
+
+    <!-- Like Button with Background -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/likeButtonContainer"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        app:cardCornerRadius="22.5dp"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/profileImage"
+        app:layout_constraintBottom_toBottomOf="@id/profileImage">
+
+        <!-- View để chứa gradient -->
+        <View
+            android:id="@+id/likeButtonBackground"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/bg_gray" />
+
+        <ImageView
+            android:id="@+id/likeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_heart_fill"
+            app:tint="#00C4B4" />
+    </androidx.cardview.widget.CardView>
+
+    <!-- More Button with Background -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/moreButtonContainer"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        app:cardCornerRadius="22.5dp"
+        app:cardBackgroundColor="@color/bg_gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/profileImage"
+        app:layout_constraintBottom_toBottomOf="@id/profileImage">
+
+        <ImageView
+            android:id="@+id/moreButton"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_more"
+            app:tint="@color/text_white" />
+    </androidx.cardview.widget.CardView>
+
+    <!-- RecyclerView for Song List -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewSongs"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/profileImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:listitem="@layout/item_song" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
