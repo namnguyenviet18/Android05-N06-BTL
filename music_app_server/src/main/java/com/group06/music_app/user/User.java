@@ -1,5 +1,12 @@
 package com.group06.music_app.user;
 
+import com.group06.music_app.playlist.Playlist;
+import com.group06.music_app.song.Song;
+import com.group06.music_app.song_history.SongHistory;
+import com.group06.music_app.comment.Comment;
+import com.group06.music_app.comment.CommentLike;
+import com.group06.music_app.playlist.PlaylistLike;
+import com.group06.music_app.song.SongLike;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -12,6 +19,8 @@ import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -48,6 +57,30 @@ public class User implements UserDetails, Principal {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private LoginMethod loginMethod;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private OTP otp;
+
+    @OneToMany(mappedBy = "user")
+    private List<Song> songs;
+
+    @OneToMany(mappedBy = "user")
+    private List<Playlist> playlists;
+
+    @OneToMany(mappedBy = "user")
+    private List<SongLike> songLikes;
+
+    @OneToMany(mappedBy = "user")
+    private List<PlaylistLike> playlistLikes;
+
+    @OneToMany(mappedBy = "user")
+    private List<Comment> comments;
+
+    @OneToMany(mappedBy = "user")
+    private List<CommentLike> commentLikes;
+
+    @OneToMany(mappedBy = "user")
+    private List<SongHistory> songHistories;
 
 
     @CreatedDate
@@ -87,4 +120,7 @@ public class User implements UserDetails, Principal {
     public String getUsername() {
         return email;
     }
+
+
 }
+

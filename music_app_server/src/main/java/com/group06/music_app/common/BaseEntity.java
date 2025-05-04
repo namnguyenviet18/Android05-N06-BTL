@@ -1,4 +1,4 @@
-package com.group06.music_app.commom;
+package com.group06.music_app.common;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

@@ -5,5 +5,5 @@
         android:endColor="@color/mint_bright"
         android:type="linear"
         android:angle="0" />
-    <corners android:radius="3dp" />
+    <corners android:radius="14dp" />
 </shape>

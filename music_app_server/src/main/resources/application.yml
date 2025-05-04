@@ -3,9 +3,9 @@ spring:
     name: music_app
 
   datasource:
-    url: jdbc:postgresql://localhost:5678/music_app_db
-    username: username
-    password: password
+    url: jdbc:postgresql://localhost:5432/music_app_db
+    username: postgres
+    password: 1234
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
