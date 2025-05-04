@@ -2,6 +2,16 @@ package com.group06.music_app.user;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.security.Principal;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
 
 @Getter
 @Setter
@@ -10,7 +20,7 @@ import lombok.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "_user")
-public class User {
+public class User implements UserDetails, Principal {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -26,8 +36,55 @@ public class User {
     @Column(length = 500)
     private String avatarUrl;
     @Column(nullable = false, insertable = false)
-    private boolean enable = false;
+    private boolean enabled = false;
 
     @Column(nullable = false, insertable = false)
     private boolean accountLocked = false;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private LoginMethod loginMethod;
+
+
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdDate;
+
+    @LastModifiedDate
+    @Column(insertable = false)
+    private LocalDateTime lastModifiedDate;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(new SimpleGrantedAuthority(role.name()));
+    }
+
+    @Override
+    public String getName() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return !accountLocked;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
 }

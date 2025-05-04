@@ -35,7 +35,7 @@ android {
     }
 
 }
-
+//9B:26:D2:30:60:DB:F0:39:0E:98:2A:7B:69:0D:31:11:EC:2C:E1:10
 dependencies {
     implementation(libs.glide)
     annotationProcessor(libs.glide.compiler)
