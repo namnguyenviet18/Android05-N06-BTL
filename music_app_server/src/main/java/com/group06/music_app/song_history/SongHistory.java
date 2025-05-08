@@ -26,7 +26,6 @@ public class SongHistory extends BaseEntity {
     @JoinColumn(name = "song_id", nullable = false)
     private Song song;
 
-    @Column
     private Integer percentage; // 0 - 100 (% nghe được của bài hát)
 }
 

@@ -35,4 +35,18 @@ public class Comment extends BaseEntity {
 
     @OneToMany(mappedBy = "comment")
     private List<CommentLike> commentLikes;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "root_id")
+    private Comment root;
+
+    @OneToMany(mappedBy = "root")
+    private List<Comment> descendants;
+
+    @ManyToOne
+    @JoinColumn(name = "parent_id")
+    private Comment parent;
+
+    @OneToMany(mappedBy = "parent")
+    private List<Comment> child;
 }

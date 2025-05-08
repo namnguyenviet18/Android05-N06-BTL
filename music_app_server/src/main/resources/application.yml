@@ -3,9 +3,9 @@ spring:
     name: music_app
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/music_app_db
-    username: postgres
-    password: 1234
+    url: jdbc:postgresql://localhost:5678/music_app_db
+    username: username
+    password: password
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -18,7 +18,7 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   mail:
     host: localhost
-    port: 1080
+    port: 1025
     username: "group6"
     password: "group6"
     properties:
@@ -31,7 +31,9 @@ spring:
           starttls:
             enable: false
     protocol: smtp
-
+  redis:
+    host: localhost
+    port: 6379
 application:
   security:
     jwt:
@@ -47,6 +49,10 @@ application:
 
 springdoc:
   default-produces-media-type: application/json
+  pi-docs:
+    path: /api/v1/docs
+    swagger-ui:
+      path: /swagger-ui
 server:
   servlet:
     context-path: /api/v1/

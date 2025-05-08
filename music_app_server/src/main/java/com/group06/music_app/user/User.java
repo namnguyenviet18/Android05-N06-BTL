@@ -1,5 +1,6 @@
 package com.group06.music_app.user;
 
+import com.group06.music_app.otp.OTP;
 import com.group06.music_app.playlist.Playlist;
 import com.group06.music_app.song.Song;
 import com.group06.music_app.song_history.SongHistory;
@@ -11,6 +12,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,6 +31,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "_user")
+@EntityListeners(AuditingEntityListener.class)
 public class User implements UserDetails, Principal {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -44,10 +47,10 @@ public class User implements UserDetails, Principal {
     private String password;
     @Column(length = 500)
     private String avatarUrl;
-    @Column(nullable = false, insertable = false)
+    @Column(nullable = false)
     private boolean enabled = false;
 
-    @Column(nullable = false, insertable = false)
+    @Column(nullable = false)
     private boolean accountLocked = false;
 
     @Column(nullable = false)
@@ -59,7 +62,7 @@ public class User implements UserDetails, Principal {
     private LoginMethod loginMethod;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private OTP otp;
+    private List<OTP> otp;
 
     @OneToMany(mappedBy = "user")
     private List<Song> songs;
@@ -91,6 +94,7 @@ public class User implements UserDetails, Principal {
     @Column(insertable = false)
     private LocalDateTime lastModifiedDate;
 
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority(role.name()));
@@ -121,6 +125,8 @@ public class User implements UserDetails, Principal {
         return email;
     }
 
-
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
 }
 
