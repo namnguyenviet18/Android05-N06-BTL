@@ -1,5 +1,6 @@
 package com.group06.music_app.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.group06.music_app.otp.OTP;
 import com.group06.music_app.playlist.Playlist;
 import com.group06.music_app.song.Song;
@@ -62,6 +63,7 @@ public class User implements UserDetails, Principal {
     private LoginMethod loginMethod;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<OTP> otp;
 
     @OneToMany(mappedBy = "user")

@@ -60,7 +60,8 @@ public class BeansConfig {
                 HttpHeaders.ORIGIN,
                 HttpHeaders.CONTENT_TYPE,
                 HttpHeaders.ACCEPT,
-                HttpHeaders.AUTHORIZATION
+                HttpHeaders.AUTHORIZATION,
+                "REFRESH_TOKEN"
         ));
         config.setAllowedMethods(Arrays.asList(
                 "GET",

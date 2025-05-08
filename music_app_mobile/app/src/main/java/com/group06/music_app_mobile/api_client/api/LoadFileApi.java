@@ -1,4 +1,4 @@
-package com.group06.music_app_mobile.api_client;
+package com.group06.music_app_mobile.api_client.api;
 
 import java.util.Map;
 

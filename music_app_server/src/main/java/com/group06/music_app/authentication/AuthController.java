@@ -38,6 +38,7 @@ public class AuthController {
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody @Valid AuthenticationRequest request
     ) throws AccessDeniedException {
+        System.out.println("vao day");
        return ResponseEntity.ok(service.authenticate(request));
     }
 

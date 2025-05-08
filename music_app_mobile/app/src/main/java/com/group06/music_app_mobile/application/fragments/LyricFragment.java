@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
 import com.group06.music_app_mobile.api_client.ApiClient;
-import com.group06.music_app_mobile.api_client.LoadFileApi;
+import com.group06.music_app_mobile.api_client.api.LoadFileApi;
 import com.group06.music_app_mobile.application.activities.PlayActivity;
 import com.group06.music_app_mobile.application.adapters.LyricAdapter;
 import com.group06.music_app_mobile.databinding.FragmentLyricBinding;

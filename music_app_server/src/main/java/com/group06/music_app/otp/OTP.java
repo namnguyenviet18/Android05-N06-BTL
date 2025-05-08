@@ -1,4 +1,5 @@
 package com.group06.music_app.otp;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.group06.music_app.common.BaseEntity;
 import com.group06.music_app.user.User;
 import jakarta.persistence.*;
@@ -31,5 +32,6 @@ public class OTP extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
     private User user;
 }
