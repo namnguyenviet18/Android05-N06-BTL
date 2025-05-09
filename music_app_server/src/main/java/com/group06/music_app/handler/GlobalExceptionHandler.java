@@ -1,6 +1,7 @@
 package com.group06.music_app.handler;
 
 import com.group06.music_app.handler.custom_exception.*;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -14,6 +15,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
+@Tag(name = "Exception")
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
@@ -44,7 +46,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> handlerException(
             AccountNotApprovedException exp
     ) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
                 .body(
                         ExceptionResponse.builder()
                                 .message(exp.getMessage())
@@ -56,7 +58,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> handlerException(
             AccountLockedException exp
     ) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+        return ResponseEntity.status(HttpStatus.LOCKED)
                 .body(
                         ExceptionResponse.builder()
                                 .message(exp.getMessage())

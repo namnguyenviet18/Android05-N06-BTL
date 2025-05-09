@@ -23,11 +23,16 @@ public class SecurityConfig {
 
     private static final String[] WHITE_LIST = {
             "/auth/**",
-            "/api/v1/swagger-ui/**",
-            "/api/v1/swagger-ui.html",
-            "/api/v1/api-docs/**",
-            "/api/v1/swagger-resources/**",
-            "/api/v1/webjars/**"
+            "/v2/api-docs",
+            "/v3/api-docs",
+            "/v3/api-docs/**",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui/**",
+            "/webjars/**",
+            "/swagger-ui.html"
     };
 
     private final JwtFilter jwtFilter;

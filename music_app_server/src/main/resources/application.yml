@@ -49,10 +49,6 @@ application:
 
 springdoc:
   default-produces-media-type: application/json
-  pi-docs:
-    path: /api/v1/docs
-    swagger-ui:
-      path: /swagger-ui
 server:
   servlet:
     context-path: /api/v1/

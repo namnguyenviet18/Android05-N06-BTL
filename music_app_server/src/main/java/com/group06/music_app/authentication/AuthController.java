@@ -21,7 +21,7 @@ import java.nio.file.AccessDeniedException;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-@Tag(name = "Authentication", description = "APIs for login, register, and OTP")
+@Tag(name = "Authentication")
 public class AuthController {
 
     private final AuthService service;

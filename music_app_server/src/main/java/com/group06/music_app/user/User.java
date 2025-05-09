@@ -113,6 +113,11 @@ public class User implements UserDetails, Principal {
     }
 
     @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
@@ -125,6 +130,11 @@ public class User implements UserDetails, Principal {
     @Override
     public String getUsername() {
         return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
     public String getFullName() {

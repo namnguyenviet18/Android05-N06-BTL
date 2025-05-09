@@ -2,6 +2,7 @@ package com.group06.music_app_mobile.api_client;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -32,6 +33,7 @@ public class RequestInterceptor implements Interceptor {
     @NonNull
     @Override
     public Response intercept(Chain chain) throws IOException {
+        Log.d("INTER", "VAO INTERCEPTOR");
         Request originalRequest = chain.request();
         String path = originalRequest.url().encodedPath();
         if(!path.contains("auth")) {
