@@ -7,8 +7,13 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+import lombok.*;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+
 public class AuthenticationRequest {
     @Email(message = "Email is not well formatted")
     @NotEmpty(message = "Email is required")
