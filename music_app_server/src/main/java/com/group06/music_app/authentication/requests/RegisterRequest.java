@@ -1,11 +1,11 @@
 package com.group06.music_app.authentication.requests;
-
 import jakarta.validation.constraints.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@Data // Tự động tạo getter, setter, toString, equals, hashCode
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class RegisterRequest {
     @NotEmpty(message = "Firstname is required")
     @NotBlank(message = "Firstname is required")

@@ -22,7 +22,9 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 public class SecurityConfig {
 
     private static final String[] WHITE_LIST = {
+            "/**",
             "/auth/**",
+            "/api/v1/**",
             "/v2/api-docs",
             "/v3/api-docs",
             "/v3/api-docs/**",

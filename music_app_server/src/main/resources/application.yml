@@ -1,4 +1,9 @@
 spring:
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
   application:
     name: music_app
 
@@ -49,6 +54,12 @@ application:
 
 springdoc:
   default-produces-media-type: application/json
+  default-consumes-media-type: application/json # Không ảnh hưởng đến multipart
+  swagger-ui:
+    supportedSubmitMethods: [get, post, put, delete]
+    path: /swagger-ui.html
+
 server:
   servlet:
     context-path: /api/v1/
+  port: 8088

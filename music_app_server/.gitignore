@@ -32,3 +32,5 @@ build/
 src/main/resources/application-extend.yml
 ### VS Code ###
 .vscode/
+
+uploads/

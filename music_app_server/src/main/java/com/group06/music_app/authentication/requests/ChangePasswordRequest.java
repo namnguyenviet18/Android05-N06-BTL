@@ -7,8 +7,12 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+import lombok.*;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ChangePasswordRequest {
     @NotEmpty(message = "New password is required")
     @NotBlank(message = "New password is required")
