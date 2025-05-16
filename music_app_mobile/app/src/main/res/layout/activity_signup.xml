@@ -65,7 +65,8 @@
                     android:textColor="@color/text_white" />
 
                 <EditText
-                    style="@style/RoundedEditText" />
+                    style="@style/RoundedEditText"
+                    android:hint="John"/>
             </LinearLayout>
 
             <LinearLayout
@@ -80,7 +81,8 @@
                     android:textColor="@color/text_white" />
 
                 <EditText
-                    style="@style/RoundedEditText" />
+                    style="@style/RoundedEditText"
+                    android:hint="Doe"/>
             </LinearLayout>
 
             <!-- Email Field -->
@@ -96,7 +98,8 @@
                     android:textColor="@color/text_white" />
 
                 <EditText
-                    style="@style/RoundedEditText" />
+                    style="@style/RoundedEditText"
+                    android:hint="music@gmail.com"/>
             </LinearLayout>
 
             <!-- Password Field -->
@@ -114,7 +117,8 @@
                 <EditText
                     android:id="@+id/passwordEditText"
                     style="@style/RoundedEditText"
-                    android:inputType="textPassword" />
+                    android:inputType="textPassword"
+                    android:hint="**************"/>
             </LinearLayout>
 
             <!-- Sign In Button -->
