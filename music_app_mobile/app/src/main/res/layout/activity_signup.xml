@@ -65,6 +65,7 @@
                     android:textColor="@color/text_white" />
 
                 <EditText
+                    android:id="@+id/firstNameEdittext"
                     style="@style/RoundedEditText"
                     android:hint="John"/>
             </LinearLayout>
@@ -81,6 +82,7 @@
                     android:textColor="@color/text_white" />
 
                 <EditText
+                    android:id="@+id/lastNameEdittext"
                     style="@style/RoundedEditText"
                     android:hint="Doe"/>
             </LinearLayout>
@@ -98,6 +100,7 @@
                     android:textColor="@color/text_white" />
 
                 <EditText
+                    android:id="@+id/emailEdittext"
                     style="@style/RoundedEditText"
                     android:hint="music@gmail.com"/>
             </LinearLayout>
@@ -121,9 +124,9 @@
                     android:hint="**************"/>
             </LinearLayout>
 
-            <!-- Sign In Button -->
+            <!-- Sign Up Button -->
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/login_button"
+                android:id="@+id/signup_button"
                 style="@style/SignInButtonStyle"
                 android:text="Sign up" />
 
