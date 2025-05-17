@@ -4,13 +4,14 @@ import android.os.Build;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class AppUtils {
 
     private AppUtils() {}
 
     public static String getTimeAgo(LocalDateTime createdDate) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O || createdDate == null) {
+        if (createdDate == null) {
             return "";
         }
 
@@ -44,5 +45,10 @@ public class AppUtils {
             long years = days / 365;
             return years + " năm trước";
         }
+    }
+
+    public static String localDateTimeToString(LocalDateTime dateTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        return dateTime.format(formatter);
     }
 }

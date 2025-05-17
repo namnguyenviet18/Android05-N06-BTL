@@ -20,5 +20,18 @@ public class BaseEntity {
     private String lastModifiedDate;
     private Long createdBy;
     private Long lastModifiedBy;
+
+
+    public LocalDateTime createdDateFromString() {
+        return toLocalDateTime(this.createdDate);
+    }
+
+    public LocalDateTime lastModifiedDateFromString() {
+        return toLocalDateTime(this.lastModifiedDate);
+    }
+
+    private LocalDateTime toLocalDateTime(String dateTimeString) {
+        return LocalDateTime.parse(dateTimeString);
+    }
 }
 

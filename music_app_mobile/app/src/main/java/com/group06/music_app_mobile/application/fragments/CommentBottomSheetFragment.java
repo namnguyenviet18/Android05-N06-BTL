@@ -1,6 +1,5 @@
 package com.group06.music_app_mobile.application.fragments;
 
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -11,9 +10,9 @@ import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.group06.music_app_mobile.app_utils.AppUtils;
 import com.group06.music_app_mobile.application.activities.PlayActivity;
 import com.group06.music_app_mobile.application.adapters.CommentAdapter;
 import com.group06.music_app_mobile.databinding.CommentViewBinding;
@@ -96,7 +95,7 @@ public class CommentBottomSheetFragment extends BottomSheetDialogFragment {
                 .content("Comment của user 1")
                 .isLiked(true)
                 .likeCount(15)
-                .createdDate(LocalDateTime.now())
+                .createdDate(AppUtils.localDateTimeToString(LocalDateTime.now()))
                 .descendantCount(10)
                 .descendants(new ArrayList<>())
                 .isDeleted(false)
@@ -109,7 +108,7 @@ public class CommentBottomSheetFragment extends BottomSheetDialogFragment {
                 .content("Comment của user 2")
                 .isLiked(false)
                 .likeCount(32)
-                .createdDate(LocalDateTime.now())
+                .createdDate(AppUtils.localDateTimeToString(LocalDateTime.now()))
                 .descendantCount(0)
                 .descendants(new ArrayList<>())
                 .isDeleted(false)
@@ -122,7 +121,7 @@ public class CommentBottomSheetFragment extends BottomSheetDialogFragment {
                 .content("Comment của user 3")
                 .isLiked(false)
                 .likeCount(32)
-                .createdDate(LocalDateTime.now())
+                .createdDate(AppUtils.localDateTimeToString(LocalDateTime.now()))
                 .descendantCount(0)
                 .descendants(new ArrayList<>())
                 .isDeleted(false)

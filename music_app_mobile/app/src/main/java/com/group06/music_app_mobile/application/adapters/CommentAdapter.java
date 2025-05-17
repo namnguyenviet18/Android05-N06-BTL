@@ -14,6 +14,7 @@ import com.group06.music_app_mobile.app_utils.AppUtils;
 import com.group06.music_app_mobile.databinding.ItemCommentBinding;
 import com.group06.music_app_mobile.models.Comment;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
@@ -57,7 +58,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         holder.binding.getRoot().setId(Math.toIntExact(comment.getId()));
         holder.binding.commentName.setText(comment.getUser().getFullName());
         holder.binding.commentContent.setText(comment.getContent());
-        holder.binding.commentTime.setText(AppUtils.getTimeAgo(comment.getCreatedDate()));
+        holder.binding.commentTime.setText(AppUtils.getTimeAgo(LocalDateTime.parse(comment.getCreatedDate())));
         if (comment.isLiked()) {
             holder.binding.commentLikeButton.setImageResource(R.drawable.ic_heart_fill);
         } else {
