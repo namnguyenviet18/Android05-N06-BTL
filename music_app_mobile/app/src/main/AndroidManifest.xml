@@ -25,6 +25,12 @@
             android:name=".application.activities.SignupActivity"
             android:exported="false" />
         <activity
+            android:name=".application.activities.ForgotPasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".application.activities.ChangePasswordActivity"
+            android:exported="false" />
+        <activity
             android:name=".application.activities.WelcomeActivity"
             android:exported="false" />
         <activity
@@ -37,7 +43,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".application.activities.ForgotPasswordActivity" />
         <activity android:name=".application.activities.VerificationActivity" />
         <activity
             android:name=".application.activities.MainActivity"

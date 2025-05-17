@@ -84,6 +84,7 @@ public class SignupActivity extends AppCompatActivity {
                         Intent intent = new Intent(SignupActivity.this, VerificationActivity.class);
                         intent.putExtra("email", email);
                         intent.putExtra("otpToken", otp.getToken()); // Gửi token OTP nếu cần
+                        intent.putExtra("action", "Signup");
                         startActivity(intent);
                     } else {
                         Toast.makeText(SignupActivity.this, "Phản hồi từ server không hợp lệ", Toast.LENGTH_SHORT).show();

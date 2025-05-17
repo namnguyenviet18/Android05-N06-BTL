@@ -15,6 +15,7 @@ import com.group06.music_app_mobile.api_client.ApiClient;
 import com.group06.music_app_mobile.api_client.api.AuthApi;
 import com.group06.music_app_mobile.api_client.requests.AuthenticationRequest;
 import com.group06.music_app_mobile.api_client.responses.AuthenticationResponse;
+import com.group06.music_app_mobile.app_utils.StorageService;
 import com.group06.music_app_mobile.databinding.ActivityLoginBinding;
 
 import retrofit2.Call;
@@ -73,7 +74,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login(String email, String password) {
-        AuthenticationRequest request = new AuthenticationRequest(email, password);
+        AuthenticationRequest request = new AuthenticationRequest();
+        request.setEmail(email);
+        request.setPassword(password);
 
         AuthApi authApi = ApiClient.getClient(this).create(AuthApi.class);
         Call<AuthenticationResponse> call = authApi.authenticate(request);
@@ -88,12 +91,10 @@ public class LoginActivity extends AppCompatActivity {
                     String accessToken = authResponse.getAccessToken();
                     String refreshToken = authResponse.getRefreshToken();
 
-                    // Lưu token vào SharedPreferences
-//                    SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
-//                    SharedPreferences.Editor editor = sharedPreferences.edit();
-//                    editor.putString("accessToken", accessToken);
-//                    editor.putString("refreshToken", refreshToken);
-//                    editor.apply();
+                    // Lưu token
+                    StorageService storageService = StorageService.getInstance(LoginActivity.this);
+                    storageService.setAccessToken(accessToken);
+                    storageService.setRefreshToken(refreshToken);
 
                     // Đóng tất cả Activity và chuyển đến Trang chủ (HomeActivity)
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
