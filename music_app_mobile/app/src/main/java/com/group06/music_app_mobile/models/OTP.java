@@ -1,6 +1,8 @@
 package com.group06.music_app_mobile.models;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
@@ -8,7 +10,7 @@ import java.time.LocalDateTime;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OTP extends BaseEntity {
+public class OTP extends BaseEntity implements Serializable {
     private String token;
     private boolean isUsed = false;
     private String issuedAt;

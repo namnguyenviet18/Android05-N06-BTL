@@ -79,11 +79,15 @@ public class SignupActivity extends AppCompatActivity {
                 int code = response.code();
                 if (code == 200 || code == 201) {
                     OTP otp = response.body();
+                    Log.d("DEBUG", "HEHEHEHE Otp " + otp.getIssuedAt() + " " + otp.getExpireAt());
+
                     if (otp != null) {
+
+
                         // Đăng ký thành công, chuyển sang màn xác thực OTP
                         Intent intent = new Intent(SignupActivity.this, VerificationActivity.class);
                         intent.putExtra("email", email);
-                        intent.putExtra("otpToken", otp.getToken()); // Gửi token OTP nếu cần
+                        intent.putExtra("otp", otp); // Gửi token OTP nếu cần
                         intent.putExtra("action", "Signup");
                         startActivity(intent);
                     } else {

@@ -36,20 +36,17 @@ public class RequestInterceptor implements Interceptor {
         Log.d("INTER", "VAO INTERCEPTOR");
         Request originalRequest = chain.request();
         String path = originalRequest.url().encodedPath();
-        if(!path.contains("auth")) {
-            originalRequest = originalRequest.newBuilder()
-                    .header(
-                            "Authorization",
-                            storageService.getAccessToken()
-                    ).build();
+        Request.Builder builder = originalRequest.newBuilder();
+
+        if (!path.contains("auth")) {
+            builder.header("Authorization", "Bearer " + storageService.getAccessToken());
         }
-        if(path.contains("logout")) {
-            originalRequest = originalRequest.newBuilder()
-                    .header(
-                            "REFRESH_TOKEN",
-                            storageService.getRefreshToken()
-                    ).build();
+
+        if (path.contains("logout")) {
+            builder.header("REFRESH_TOKEN", "Bearer " + storageService.getRefreshToken());
         }
+
+        originalRequest = builder.build();
         Response response = chain.proceed(originalRequest);
         if(response.code() == 401) {
             response.close();
