@@ -16,8 +16,8 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 public class BaseEntity {
     private Long id;
-    private LocalDateTime createdDate;
-    private LocalDateTime lastModifiedDate;
+    private String createdDate;
+    private String lastModifiedDate;
     private Long createdBy;
     private Long lastModifiedBy;
 }

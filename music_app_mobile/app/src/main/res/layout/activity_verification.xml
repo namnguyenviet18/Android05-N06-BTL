@@ -60,6 +60,9 @@
         <EditText
             android:id="@+id/otpBox5"
             style="@style/OtpBoxStyle"/>
+        <EditText
+            android:id="@+id/otpBox6"
+            style="@style/OtpBoxStyle"/>
 
     </LinearLayout>
     <!-- Change Button -->

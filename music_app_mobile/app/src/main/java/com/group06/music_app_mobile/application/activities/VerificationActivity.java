@@ -1,7 +1,9 @@
 package com.group06.music_app_mobile.application.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -10,6 +12,18 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.group06.music_app_mobile.R;
+import com.group06.music_app_mobile.api_client.ApiClient;
+import com.group06.music_app_mobile.api_client.api.AuthApi;
+import com.group06.music_app_mobile.api_client.requests.AuthenticationRequest;
+import com.group06.music_app_mobile.api_client.requests.VerifyOtpRequest;
+import com.group06.music_app_mobile.api_client.responses.AuthenticationResponse;
+import com.group06.music_app_mobile.app_utils.StorageService;
+
+import java.util.Objects;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class VerificationActivity extends AppCompatActivity {
 
@@ -17,6 +31,7 @@ public class VerificationActivity extends AppCompatActivity {
     private Button verifyButton;
     private TextView timerText;
     private CountDownTimer countDownTimer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +44,8 @@ public class VerificationActivity extends AppCompatActivity {
                 findViewById(R.id.otpBox2),
                 findViewById(R.id.otpBox3),
                 findViewById(R.id.otpBox4),
-                findViewById(R.id.otpBox5)
+                findViewById(R.id.otpBox5),
+                findViewById(R.id.otpBox6)
         };
 
         verifyButton = findViewById(R.id.changeButton);
@@ -55,13 +71,10 @@ public class VerificationActivity extends AppCompatActivity {
                     }
                     otp.append(digit);
                 }
-
+                String action = getIntent().getStringExtra("action");
+                Log.e("DEBUG", "HEHEHE ACTION: " + action);
                 // Here you would typically verify the OTP with your backend
-                // For demo purposes, we'll just show a success message
-                Toast.makeText(VerificationActivity.this,
-                        "OTP Verified Successfully", Toast.LENGTH_SHORT).show();
-
-                // You might want to proceed to password reset screen here
+                verifyOtp(email, otp.toString(), action);
             }
         });
     }
@@ -89,5 +102,57 @@ public class VerificationActivity extends AppCompatActivity {
         if (countDownTimer != null) {
             countDownTimer.cancel();
         }
+    }
+
+    private void verifyOtp(String email, String otp, String action) {
+        Log.e("DEBUG", "HEHEHE1 ACTION: " + action);
+        Log.e("DEBUG", "HEHEHE2 bool: " + Objects.equals(action, "ChangePassword"));
+        VerifyOtpRequest request = new VerifyOtpRequest();
+        request.setEmail(email);
+        request.setOtp(otp);
+
+        AuthApi authApi = ApiClient.getClient(getApplicationContext()).create(AuthApi.class);
+        Call<AuthenticationResponse> call = authApi.verifyOtp(request);
+
+        call.enqueue(new Callback<AuthenticationResponse>() {
+            @Override
+            public void onResponse(Call<AuthenticationResponse> call, Response<AuthenticationResponse> response) {
+
+                int code = response.code();
+
+                if (code == 200 && response.body() != null) {
+                    AuthenticationResponse authResponse = response.body();
+                    String accessToken = authResponse.getAccessToken();
+                    String refreshToken = authResponse.getRefreshToken();
+
+                    // Lưu token
+                    StorageService storageService = StorageService.getInstance(VerificationActivity.this);
+                    storageService.setAccessToken(accessToken);
+                    storageService.setRefreshToken(refreshToken);
+
+                    if (Objects.equals(action, "ChangePassword")){
+                        Intent intent = new Intent(VerificationActivity.this, ChangePasswordActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                    } else {
+                        Intent intent = new Intent(VerificationActivity.this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                    }
+                } else {
+                    String errorMessage = switch (code) {
+                        case 400 -> "Mã OTP không hợp lệ";
+                        case 401 -> "Mã OTP sai";
+                        default -> "Xác thực OTP thất bại: " + code;
+                    };
+                    Toast.makeText(VerificationActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AuthenticationResponse> call, Throwable t) {
+                Toast.makeText(VerificationActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
