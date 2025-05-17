@@ -86,14 +86,12 @@ public class VerificationActivity extends AppCompatActivity {
     private void startTimer() {
         try {
             OTP otp_maildev = (OTP) getIntent().getSerializableExtra("otp");
-            String start_time_str = otp_maildev.getIssuedAt();
             String expire_time_str = otp_maildev.getExpireAt();
 
-            String start_time_tmp = start_time_str.substring(0, 19);
             String expire_time_tmp = expire_time_str.substring(0, 19);
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-            Date start_time_d = sdf.parse(start_time_tmp);
+            Date start_time_d = sdf.parse(sdf.format(new Date()));
             Date expire_time_d = sdf.parse(expire_time_tmp);
 
             long remain_seconds = (expire_time_d.getTime() - start_time_d.getTime()) / 1000;
