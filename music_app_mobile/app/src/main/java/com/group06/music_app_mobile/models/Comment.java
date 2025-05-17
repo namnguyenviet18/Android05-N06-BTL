@@ -24,4 +24,6 @@ public class Comment extends BaseEntity {
     private long descendantCount;
     private List<CommentLike> likes;
     private boolean isDeleted;
+
+    private boolean showDescendants = false;
 }

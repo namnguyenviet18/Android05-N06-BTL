@@ -16,6 +16,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.group06.music_app_mobile.R;
 import com.group06.music_app_mobile.app_utils.enums.PlayMode;
 import com.group06.music_app_mobile.application.adapters.PlayPagerAdapter;
+import com.group06.music_app_mobile.application.fragments.CommentBottomSheetFragment;
 import com.group06.music_app_mobile.application.fragments.LyricFragment;
 import com.group06.music_app_mobile.databinding.ActivityPlayBinding;
 import com.group06.music_app_mobile.models.Song;
@@ -69,6 +70,7 @@ public class PlayActivity extends AppCompatActivity {
         setUpSeekbarOnChange();
         setUpPlayButton();
         setUpRepeatButton();
+        setUpCommentButton();
     }
 
     private void init() {
@@ -266,6 +268,13 @@ public class PlayActivity extends AppCompatActivity {
                         ),
                         PorterDuff.Mode.SRC_IN
                 );
+    }
+
+    private void setUpCommentButton() {
+        binding.comment.setOnClickListener(v -> {
+            CommentBottomSheetFragment commentBottomSheetFragment = new CommentBottomSheetFragment();
+            commentBottomSheetFragment.show(getSupportFragmentManager(), "comment_bottom_sheet");
+        });
     }
 
     @Override

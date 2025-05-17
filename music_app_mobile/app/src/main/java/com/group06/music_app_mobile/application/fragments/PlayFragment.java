@@ -32,28 +32,28 @@ public class PlayFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentPlayBinding.inflate(inflater, container, false);
         binding.buttonPlay.setOnClickListener(view -> {
-//            Intent intent = new Intent(requireActivity(), PlayActivity.class);
-//            startActivity(intent);
-            Log.d("DEBUG", Constants.SERVER_DOMAIN);
-            AuthApi authApi = ApiClient.getClient(requireContext()).create(AuthApi.class);
-            Call<AuthenticationResponse> call = authApi.authenticate(AuthenticationRequest.builder()
-                    .email("john.doe@example.com")
-                    .password("namptit2003")
-                    .build());
-            call.enqueue(new Callback<>() {
-                @Override
-                public void onResponse(Call<AuthenticationResponse> call, Response<AuthenticationResponse> response) {
-                    Log.d("TEST", "Vao day");
-                    assert response.body() != null;
-                    Log.d("TEST", response.body().getAccessToken());
-                }
-
-                @Override
-                public void onFailure(Call<AuthenticationResponse> call, Throwable t) {
-                    Log.e("AUTH", "API call failed", t);
-                    Toast.makeText(requireContext(), "API error: " + t.getMessage(), Toast.LENGTH_LONG).show();
-                }
-            });
+            Intent intent = new Intent(requireActivity(), PlayActivity.class);
+            startActivity(intent);
+//            Log.d("DEBUG", Constants.SERVER_DOMAIN);
+//            AuthApi authApi = ApiClient.getClient(requireContext()).create(AuthApi.class);
+//            Call<AuthenticationResponse> call = authApi.authenticate(AuthenticationRequest.builder()
+//                    .email("nam@gmail.com")
+//                    .password("123456789")
+//                    .build());
+//            call.enqueue(new Callback<>() {
+//                @Override
+//                public void onResponse(Call<AuthenticationResponse> call, Response<AuthenticationResponse> response) {
+//                    Log.d("TEST", "Vao day");
+//                    assert response.body() != null;
+//                    Log.d("TEST", response.body().getAccessToken());
+//                }
+//
+//                @Override
+//                public void onFailure(Call<AuthenticationResponse> call, Throwable t) {
+//                    Log.e("AUTH", "API call failed", t);
+//                    Toast.makeText(requireContext(), "API error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+//                }
+//            });
         });
         return binding.getRoot();
     }

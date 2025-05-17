@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId = "com.group06.music_app_mobile"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
