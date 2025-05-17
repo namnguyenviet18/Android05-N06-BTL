@@ -71,10 +71,9 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 if (code == 200 || code == 201) {
                     OTP otp = response.body();
                     if (otp != null) {
-                        // Đăng ký thành công, chuyển sang màn xác thực OTP
                         Intent intent = new Intent(ForgotPasswordActivity.this, VerificationActivity.class);
                         intent.putExtra("email", email);
-                        intent.putExtra("otpToken", otp.getToken()); // Gửi token OTP nếu cần
+                        intent.putExtra("otp", otp);
                         intent.putExtra("action", "ChangePassword");
                         startActivity(intent);
                     } else {

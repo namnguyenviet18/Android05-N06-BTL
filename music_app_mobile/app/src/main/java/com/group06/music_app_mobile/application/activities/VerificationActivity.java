@@ -18,7 +18,12 @@ import com.group06.music_app_mobile.api_client.requests.AuthenticationRequest;
 import com.group06.music_app_mobile.api_client.requests.VerifyOtpRequest;
 import com.group06.music_app_mobile.api_client.responses.AuthenticationResponse;
 import com.group06.music_app_mobile.app_utils.StorageService;
+import com.group06.music_app_mobile.models.OTP;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Date;
 import java.util.Objects;
 
 import retrofit2.Call;
@@ -72,7 +77,6 @@ public class VerificationActivity extends AppCompatActivity {
                     otp.append(digit);
                 }
                 String action = getIntent().getStringExtra("action");
-                Log.e("DEBUG", "HEHEHE ACTION: " + action);
                 // Here you would typically verify the OTP with your backend
                 verifyOtp(email, otp.toString(), action);
             }
@@ -80,20 +84,42 @@ public class VerificationActivity extends AppCompatActivity {
     }
 
     private void startTimer() {
-        countDownTimer = new CountDownTimer(50000, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                long seconds = millisUntilFinished / 1000;
-                timerText.setText(String.format("00:%02d", seconds));
-            }
+        try {
+            OTP otp_maildev = (OTP) getIntent().getSerializableExtra("otp");
+            String start_time_str = otp_maildev.getIssuedAt();
+            String expire_time_str = otp_maildev.getExpireAt();
 
-            @Override
-            public void onFinish() {
-                timerText.setText("00:00");
-                Toast.makeText(VerificationActivity.this,
-                        "OTP expired. Please request a new one", Toast.LENGTH_SHORT).show();
-            }
-        }.start();
+            String start_time_tmp = start_time_str.substring(0, 19);
+            String expire_time_tmp = expire_time_str.substring(0, 19);
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            Date start_time_d = sdf.parse(start_time_tmp);
+            Date expire_time_d = sdf.parse(expire_time_tmp);
+
+            long remain_seconds = (expire_time_d.getTime() - start_time_d.getTime()) / 1000;
+
+            countDownTimer = new CountDownTimer(remain_seconds * 1000, 1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    long totalSeconds = millisUntilFinished / 1000;
+                    long minutes = totalSeconds / 60;
+                    long seconds = totalSeconds % 60;
+
+                    timerText.setText(String.format("%02d:%02d", minutes, seconds));
+                }
+
+                @Override
+                public void onFinish() {
+                    timerText.setText("00:00");
+                    Toast.makeText(VerificationActivity.this,
+                            "OTP expired. Please request a new one", Toast.LENGTH_SHORT).show();
+                }
+            }.start();
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Invalid time format in OTP", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
