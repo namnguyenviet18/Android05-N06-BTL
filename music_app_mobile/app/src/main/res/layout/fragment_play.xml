@@ -1,21 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".application.fragments.PlayFragment">
+    android:background="@color/app_background"
+    android:fillViewport="true">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Play" />
-
-    <Button
-        android:id="@+id/button_play"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Play"
-        android:layout_gravity="center" />
+        android:padding="16dp">
 
-</FrameLayout>
+        <!-- Toolbar with Custom Back Button -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#121212"
+            app:title="Add music"
+            app:titleTextColor="#FFFFFF"
+            app:navigationIcon="@drawable/ic_back_arrow"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Song Name Input -->
+        <EditText
+            android:id="@+id/editTextSongName"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:hint="Song name"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#BBBBBB"
+            android:background="@drawable/input_background_selector"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Author Name Input -->
+        <EditText
+            android:id="@+id/editTextAuthorName"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:hint="Author name"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#BBBBBB"
+            android:background="@drawable/input_background_selector"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/editTextSongName"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Singer Name Input -->
+        <EditText
+            android:id="@+id/editTextSingerName"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:hint="Singer name"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#BBBBBB"
+            android:background="@drawable/input_background_selector"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/editTextAuthorName"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Audio File Upload -->
+        <EditText
+            android:id="@+id/editTextAudioFile"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:hint="Audio file (mp3)"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#BBBBBB"
+            android:background="@drawable/input_background_selector"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginTop="16dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:clickable="true"
+            app:layout_constraintTop_toBottomOf="@id/editTextSingerName"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Cover Image Upload -->
+        <EditText
+            android:id="@+id/editTextCoverImage"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:hint="Cover image (png/jpeg)"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#BBBBBB"
+            android:background="@drawable/input_background_selector"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginTop="16dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:clickable="true"
+            app:layout_constraintTop_toBottomOf="@id/editTextAudioFile"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Lyric Upload -->
+        <EditText
+            android:id="@+id/editTextLyric"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:hint="Lyric (json)"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#BBBBBB"
+            android:background="@drawable/input_background_selector"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginTop="16dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:clickable="true"
+            app:layout_constraintTop_toBottomOf="@id/editTextCoverImage"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Public Checkbox -->
+        <CheckBox
+            android:id="@+id/checkBoxPublic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Public"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/editTextLyric"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Add Music Button -->
+        <Button
+            android:id="@+id/buttonAddMusic"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:text="Add music"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/button_background"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintTop_toBottomOf="@id/checkBoxPublic"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
