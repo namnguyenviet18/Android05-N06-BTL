@@ -19,7 +19,7 @@ public class Comment extends BaseEntity {
     private String content;
     private List<Comment> descendants;
     private Comment parent;
-    private boolean isLiked;
+    private boolean liked;
     private long likeCount;
     private long descendantCount;
     private List<CommentLike> likes;
