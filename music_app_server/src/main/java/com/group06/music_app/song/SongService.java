@@ -8,6 +8,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -122,12 +123,10 @@ public class SongService {
     @Transactional
     public Song saveSong(String songName, String authorName, String singerName,
                          String audioFilePath, String coverImagePath, String lyricFilePath,
-                         boolean isPublic) throws Exception {
-        // Hardcode the User (e.g., fetch a default user with ID 1 or create a default one)
-        User user = userRepository.findById(2L)
-                .orElseThrow(() -> new Exception("Default user not found. Please ensure a user with ID 1 exists in the database."));
+                         boolean isPublic, Authentication currentUser) throws Exception {
+        User user = (User) currentUser.getPrincipal();
 
-        // Extract file information
+        // Extract file information to get filename, fileextension
         Path audioPath = Paths.get(audioFilePath);
         String audioFileName = audioPath.getFileName().toString();
         String audioFileExtension = audioFileName.substring(audioFileName.lastIndexOf("."));

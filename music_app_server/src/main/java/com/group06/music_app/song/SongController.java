@@ -8,6 +8,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -116,7 +117,9 @@ public class SongController {
             @RequestParam("audioFile") MultipartFile audioFile,
             @RequestParam("coverImage") MultipartFile coverImage,
             @RequestParam("lyricFile") MultipartFile lyricFile,
-            @RequestParam("isPublic") boolean isPublic) {
+            @RequestParam("isPublic") boolean isPublic,
+            Authentication currentUser
+            ) {
 
         // Validate inputs
         if (songName == null || songName.isEmpty()) {
@@ -157,7 +160,7 @@ public class SongController {
             Song savedSong = songService.saveSong(
                     songName, authorName, singerName,
                     audioFilePath, coverImagePath, lyricFilePath,
-                    isPublic
+                    isPublic, currentUser
             );
             // Return success message
             String response = String.format("Bài hát đã được thêm: Audio: %s, Cover: %s, Lyric: %s",
