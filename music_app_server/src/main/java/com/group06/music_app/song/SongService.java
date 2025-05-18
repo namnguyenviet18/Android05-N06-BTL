@@ -1,5 +1,6 @@
 package com.group06.music_app.song;
 
+import com.group06.music_app.song.response.SongResponse;
 import com.group06.music_app.user.User;
 import com.group06.music_app.user.UserRepository;
 import jakarta.annotation.PostConstruct;
@@ -15,9 +16,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -124,9 +127,6 @@ public class SongService {
         User user = userRepository.findById(2L)
                 .orElseThrow(() -> new Exception("Default user not found. Please ensure a user with ID 1 exists in the database."));
 
-        // Read lyrics from the lyric file (assuming it's a JSON file)
-        String lyrics = Files.readString(Paths.get(lyricFilePath));
-
         // Extract file information
         Path audioPath = Paths.get(audioFilePath);
         String audioFileName = audioPath.getFileName().toString();
@@ -139,7 +139,7 @@ public class SongService {
                 .singerName(singerName)
                 .audioUrl(audioFilePath)
                 .coverImageUrl(coverImagePath)
-                .lyrics(lyrics)
+                .lyrics(lyricFilePath)
                 .isPublic(isPublic)
                 .isDeleted(false)
                 .fileName(audioFileName)
@@ -151,8 +151,46 @@ public class SongService {
     }
 
     @Transactional(readOnly = true)
-    public List<Song> getAllSongs() {
-        return songRepository.findByIsDeletedFalse();
+    public List<SongResponse> getAllSongs() {
+        return songRepository.findByIsDeletedFalse().stream().map(song -> {
+            SongResponse dto = new SongResponse();
+            dto.setId(song.getId());
+            dto.setCreatedDate(song.getCreatedDate().toString());
+            dto.setName(song.getName());
+            dto.setAuthorName(song.getAuthorName());
+            dto.setSingerName(song.getSingerName());
+            dto.setAudioUrl(song.getAudioUrl());
+            dto.setCoverImageUrl(song.getCoverImageUrl());
+            dto.setLyrics(song.getLyrics());
+            dto.setFileName(song.getFileName());
+            dto.setFileExtension(song.getFileExtension());
+            dto.setIsPublic(song.isPublic());
+            dto.setIsDeleted(song.isDeleted());
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public SongResponse getSongById(Long songId) throws Exception {
+        Song song = songRepository.findById(songId)
+                .orElseThrow(() -> new Exception("Bài hát không tồn tại"));
+        if (song.isDeleted()) {
+            throw new Exception("Bài hát đã bị xóa");
+        }
+        SongResponse dto = new SongResponse();
+        dto.setId(song.getId());
+        dto.setCreatedDate(song.getCreatedDate().toString());
+        dto.setName(song.getName());
+        dto.setAuthorName(song.getAuthorName());
+        dto.setSingerName(song.getSingerName());
+        dto.setAudioUrl(song.getAudioUrl());
+        dto.setCoverImageUrl(song.getCoverImageUrl());
+        dto.setLyrics(song.getLyrics());
+        dto.setFileName(song.getFileName());
+        dto.setFileExtension(song.getFileExtension());
+        dto.setIsPublic(song.isPublic());
+        dto.setIsDeleted(song.isDeleted());
+        return dto;
     }
 
     @Transactional
@@ -162,17 +200,14 @@ public class SongService {
         if (song.isDeleted()) {
             throw new Exception("Bài hát đã bị xóa");
         }
+
+        // Xóa các tệp liên quan
+        deleteFile(song.getAudioUrl());
+        deleteFile(song.getCoverImageUrl());
+        deleteFile(song.getLyrics());
+
+        // Đánh dấu bài hát là đã xóa
         song.setDeleted(true);
         songRepository.save(song);
-    }
-
-    @Transactional(readOnly = true)
-    public Song getSongById(Long songId) throws Exception {
-        Song song = songRepository.findById(songId)
-                .orElseThrow(() -> new Exception("Bài hát không tồn tại"));
-        if (song.isDeleted()) {
-            throw new Exception("Bài hát đã bị xóa");
-        }
-        return song;
     }
 }

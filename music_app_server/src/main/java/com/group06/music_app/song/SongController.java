@@ -1,5 +1,6 @@
 package com.group06.music_app.song;
 
+import com.group06.music_app.song.response.SongResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -44,7 +45,7 @@ public class SongController {
     public ResponseEntity<Resource> serveFile(
             @RequestParam("fullUrl") String fullUrl) {
         try {
-            String relativePath = fullUrl.replaceFirst("/api/v1/upload/", "");
+            String relativePath = fullUrl.replaceFirst("/upload/", "");
             if (!relativePath.contains("/")) {
                 return ResponseEntity.badRequest().body(null);
             }
@@ -181,9 +182,9 @@ public class SongController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<Song>> getAllSongs() {
+    public ResponseEntity<List<SongResponse>> getAllSongs() {
         try {
-            List<Song> songs = songService.getAllSongs();
+            List<SongResponse> songs = songService.getAllSongs();
             if (songs.isEmpty()) {
                 return ResponseEntity.noContent().build();
             }
@@ -204,9 +205,9 @@ public class SongController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Song> getSongDetails(@PathVariable("id") Long songId) {
+    public ResponseEntity<SongResponse> getSongDetails(@PathVariable("id") Long songId) {
         try {
-            Song song = songService.getSongById(songId);
+            SongResponse song = songService.getSongById(songId);
             return ResponseEntity.ok(song);
         } catch (Exception e) {
             return ResponseEntity.status(404).body(null);
