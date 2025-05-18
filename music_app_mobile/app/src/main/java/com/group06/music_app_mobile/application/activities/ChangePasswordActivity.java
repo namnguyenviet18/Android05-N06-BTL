@@ -59,9 +59,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 }
 
                 // Start VerificationActivity
-                Intent intent = new Intent(ChangePasswordActivity.this,
-                        MainActivity.class);
-                startActivity(intent);
+                changePassword(newPassword, confirmPassword);
             }
         });
     }

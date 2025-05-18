@@ -66,6 +66,7 @@ public class User implements UserDetails, Principal {
     @JsonIgnore
     private List<OTP> otp;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<Song> songs;
 
