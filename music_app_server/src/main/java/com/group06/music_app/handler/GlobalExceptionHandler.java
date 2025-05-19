@@ -103,6 +103,19 @@ public class GlobalExceptionHandler {
                 );
     }
 
+
+    @ExceptionHandler(GoogleAuthException.class)
+    public ResponseEntity<ExceptionResponse> handlerException(
+            GoogleAuthException exp
+    ) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(
+                        ExceptionResponse.builder()
+                                .message(exp.getMessage())
+                                .build()
+                );
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ExceptionResponse> handleException(
             MethodArgumentNotValidException exp

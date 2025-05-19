@@ -1,7 +1,12 @@
 package com.group06.music_app.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
 import com.group06.music_app.authentication.requests.AuthenticationRequest;
+import com.group06.music_app.authentication.requests.GoogleAuthRequest;
 import com.group06.music_app.authentication.requests.RegisterRequest;
 import com.group06.music_app.authentication.requests.VerifyOtpRequest;
 import com.group06.music_app.authentication.responses.AuthenticationResponse;
@@ -11,22 +16,23 @@ import com.group06.music_app.handler.custom_exception.*;
 import com.group06.music_app.otp.OTP;
 import com.group06.music_app.otp.OtpRepository;
 import com.group06.music_app.security.JwtService;
-import com.group06.music_app.user.LoginMethod;
-import com.group06.music_app.user.Role;
-import com.group06.music_app.user.User;
-import com.group06.music_app.user.UserRepository;
+import com.group06.music_app.user.*;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
+import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -37,20 +43,17 @@ public class AuthService {
     private final JwtService jwtService;
     private final OtpRepository otpRepository;
     private final EmailService emailService;
+    private final UserMapper userMapper;
+
+    @Value("${application.security.google.client-id}")
+    private String clientId;
 
     public OTP register(RegisterRequest request) throws MessagingException {
         Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
         if(userOptional.isPresent()) {
             throw new EmailAlreadyExistsException("Email already exists");
         }
-        User user = User.builder()
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
-                .loginMethod(LoginMethod.PASSWORD)
-                .build();
+        User user = userMapper.fromUserRegisterRequest(request);
         userRepository.save(user);
         OTP otp = sendOTPEmail(user, "Music App Account Activation");
         return makeOtpResponse(otp);
@@ -182,5 +185,32 @@ public class AuthService {
                 new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
             }
         }
+    }
+
+    public AuthenticationResponse authenticateWithGoogle(@Valid GoogleAuthRequest request) {
+        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
+                new NetHttpTransport(), new GsonFactory())
+                .setAudience(Collections.singletonList(clientId))
+                .build();
+
+        try {
+            GoogleIdToken token = verifier.verify(request.getTokenId());
+            if(token != null) {
+                GoogleIdToken.Payload payload = token.getPayload();
+                Optional<User> userOtp = userRepository.findByEmail(payload.getEmail());
+                if(userOtp.isPresent() && userOtp.get().getLoginMethod() == LoginMethod.PASSWORD) {
+                    throw new GoogleAuthException("Your account already exists, please login with email and password!");
+                }
+                User user = userMapper.fromGooglePayload(payload);
+                if(userOtp.isEmpty()) {
+                    user = userRepository.save(user);
+                }
+                return generateTokens(user);
+
+            }
+        } catch (GeneralSecurityException | IOException e) {
+            throw new GoogleAuthException("An error occurred.!");
+        }
+        throw new GoogleAuthException("An error occurred.!");
     }
 }

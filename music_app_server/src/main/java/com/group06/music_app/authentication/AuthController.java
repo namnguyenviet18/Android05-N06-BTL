@@ -1,6 +1,7 @@
 package com.group06.music_app.authentication;
 
 import com.group06.music_app.authentication.requests.AuthenticationRequest;
+import com.group06.music_app.authentication.requests.GoogleAuthRequest;
 import com.group06.music_app.authentication.requests.RegisterRequest;
 import com.group06.music_app.authentication.requests.VerifyOtpRequest;
 import com.group06.music_app.authentication.responses.AuthenticationResponse;
@@ -40,6 +41,13 @@ public class AuthController {
     ) throws AccessDeniedException {
         System.out.println("vao day");
        return ResponseEntity.ok(service.authenticate(request));
+    }
+
+    @PostMapping("/authenticate/google")
+    public ResponseEntity<AuthenticationResponse> authenticateWithGoogle(
+            @RequestBody @Valid GoogleAuthRequest request
+    ) {
+        return ResponseEntity.ok(service.authenticateWithGoogle(request));
     }
 
     @PostMapping("/verify-otp")
