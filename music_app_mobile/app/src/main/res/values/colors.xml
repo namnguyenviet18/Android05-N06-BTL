@@ -23,4 +23,6 @@
     <color name="text_color">#FFFFFF</color>
     <color name="subtext_color">#B0B0B0</color>
     <color name="white">#FFFFFF</color>
+    <color name="teal_700">#3399FF</color>
+    <color name="gray_light">#CCCCCC</color>
 </resources>

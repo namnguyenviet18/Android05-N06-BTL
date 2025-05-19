@@ -2,6 +2,7 @@ package com.group06.music_app.handler;
 
 import com.group06.music_app.handler.custom_exception.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -81,6 +82,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ExceptionResponse> handlerException(
             UserNotFoundException exp
+    ) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(
+                        ExceptionResponse.builder()
+                                .message(exp.getMessage())
+                                .build()
+                );
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handlerException(
+            EntityNotFoundException exp
     ) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(

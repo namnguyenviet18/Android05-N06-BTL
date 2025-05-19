@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.group06.music_app_mobile.R;
 import com.group06.music_app_mobile.app_utils.AppUtils;
+import com.group06.music_app_mobile.app_utils.ReplyCommentHelper;
 import com.group06.music_app_mobile.application.events.OnExpandChildCommentListener;
 import com.group06.music_app_mobile.application.events.OnLikeClickListener;
 import com.group06.music_app_mobile.application.events.OnReplyClickListener;
@@ -38,6 +39,10 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     private OnReplyClickListener onReplyClickListener;
     private CommentAdapter childAdapter;
 
+    private Comment root;
+
+    private int rootPosition = -1;;
+
     public CommentAdapter(
             List<Comment> comments,
             Context context,
@@ -52,6 +57,26 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         this.onLikeClickListener = onLikeClickListener;
         this.onExpandChildCommentListener = onExpandChildCommentListener;
         this.onReplyClickListener = onReplyClickListener;
+    }
+
+    public CommentAdapter(
+            List<Comment> comments,
+            Context context,
+            boolean isChildComment,
+            OnLikeClickListener onLikeClickListener,
+            OnExpandChildCommentListener onExpandChildCommentListener,
+            OnReplyClickListener onReplyClickListener,
+            Comment root,
+            int rootPosition
+    ) {
+        this.comments = comments;
+        this.context = context;
+        this.isChildComment = isChildComment;
+        this.onLikeClickListener = onLikeClickListener;
+        this.onExpandChildCommentListener = onExpandChildCommentListener;
+        this.onReplyClickListener = onReplyClickListener;
+        this.root = root;
+        this.rootPosition = rootPosition;
     }
 
     @NonNull
@@ -69,16 +94,15 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
         Comment comment = comments.get(position);
 
-        if(!comment.isShowDescendants()) {
-            holder.binding.recyclerViewFeedback.setVisibility(View.GONE);
-            holder.binding.recyclerViewFeedback.setAdapter(null);
-        }
+        setExpandChildState(holder.binding, comment, position);
 
         displayCommentInfo(holder, comment);
 
-        setupExpandChild(holder.binding, comment);
+        setupExpandChild(holder.binding, comment, position);
 
         setupHandleLike(holder.binding, comment.getId());
+
+        setupReply(holder.binding, comment, position);
     }
 
     @Override
@@ -87,26 +111,10 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     }
 
 
-    private void setupExpandChild(ItemCommentBinding binding, Comment comment) {
+    private void setupExpandChild(ItemCommentBinding binding, Comment comment, int position) {
         binding.displayFeedback.setOnClickListener(view -> {
             comment.setShowDescendants(!comment.isShowDescendants());
-            if(!comment.isShowDescendants()) {
-                binding.recyclerViewFeedback.setVisibility(View.GONE);
-                binding.viewFeedback.setText("View " + comment.getDescendantCount() + " responses");
-            } else {
-                binding.recyclerViewFeedback.setVisibility(View.VISIBLE);
-                binding.viewFeedback.setText("Hide responses");
-                childAdapter = new CommentAdapter(
-                        comment.getDescendants(),
-                        context,
-                        true,
-                        onLikeClickListener,
-                        onExpandChildCommentListener,
-                        onReplyClickListener
-                );
-                binding.recyclerViewFeedback.setAdapter(childAdapter);
-                onExpandChildCommentListener.displayChild(comment.getId(), childAdapter);
-            }
+            setExpandChildState(binding, comment, position);
         });
     }
     private void setupHandleLike(ItemCommentBinding binding, Long commentId) {
@@ -115,6 +123,40 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         });
     }
 
+    private void setupReply(ItemCommentBinding binding, Comment comment, int position) {
+        binding.feedbackButton.setOnClickListener(view -> {
+            onReplyClickListener.replyClicked(ReplyCommentHelper.builder()
+                    .comment(root != null ? root : comment)
+                    .adapter(this)
+                    .isChildComment(isChildComment)
+                    .position(rootPosition == -1 ? position : rootPosition)
+                    .build());
+        });
+    }
+
+
+    private void setExpandChildState(ItemCommentBinding binding, Comment comment, int position) {
+        if(!comment.isShowDescendants()) {
+            binding.recyclerViewFeedback.setAdapter(null);
+            binding.recyclerViewFeedback.setVisibility(View.GONE);
+            binding.viewFeedback.setText("View " + comment.getDescendantCount() + " responses");
+        } else {
+            binding.recyclerViewFeedback.setVisibility(View.VISIBLE);
+            binding.viewFeedback.setText("Hide responses");
+            childAdapter = new CommentAdapter(
+                    comment.getDescendants(),
+                    context,
+                    true,
+                    onLikeClickListener,
+                    onExpandChildCommentListener,
+                    onReplyClickListener,
+                    comment,
+                    rootPosition
+            );
+            binding.recyclerViewFeedback.setAdapter(childAdapter);
+            onExpandChildCommentListener.displayChild(comment, position);
+        }
+    }
     private void displayCommentInfo(CommentViewHolder holder, Comment comment) {
         Glide.with(context)
                 .load(comment.getUser().getAvatarUrl())
@@ -130,7 +172,11 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         holder.binding.commentName.setText(name);
         holder.binding.commentContent.setText(comment.getContent());
         holder.binding.commentTime.setText(AppUtils.getTimeAgo(LocalDateTime.parse(comment.getCreatedDate())));
-        holder.binding.commentLikeText.setText(String.valueOf(comment.getLikeCount()));
+        if(comment.getLikeCount() > 0) {
+            holder.binding.commentLikeText.setText(String.valueOf(comment.getLikeCount()));
+        }else {
+            holder.binding.commentLikeText.setText("  ");
+        }
         if (comment.isLiked()) {
             holder.binding.commentLikeButton.setImageResource(R.drawable.ic_heart_fill);
         } else {
