@@ -154,10 +154,8 @@ public class CommentBottomSheetFragment
                         comment.getDescendants().add(newComment);
                         comment.setDescendantCount(comment.getDescendantCount() + 1);
                         commentAdapter.notifyItemChanged(replyCommentHelper.getPosition());
-                        binding.edtComment.setText("");
-                        replyCommentHelper = null;
-                        setReplyToViewState();
                     }
+                    afterCommentSuccessfully();
                 }
             }
 
@@ -223,6 +221,15 @@ public class CommentBottomSheetFragment
     public void replyClicked(ReplyCommentHelper replyCommentHelper) {
         this.replyCommentHelper = replyCommentHelper;
         binding.edtComment.requestFocus();
+        setReplyToViewState();
+    }
+
+    private void afterCommentSuccessfully() {
+        playActivity.getSong().setCommentCount(playActivity.getSong().getCommentCount() + 1);
+        playActivity.displayInfo();
+        setCommentCount();
+        binding.edtComment.setText("");
+        replyCommentHelper = null;
         setReplyToViewState();
     }
 

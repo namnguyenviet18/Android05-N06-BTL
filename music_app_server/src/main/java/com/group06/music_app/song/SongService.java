@@ -1,5 +1,7 @@
 package com.group06.music_app.song;
 
+import com.group06.music_app.comment.Comment;
+import com.group06.music_app.comment.CommentLike;
 import com.group06.music_app.song.response.SongResponse;
 import com.group06.music_app.user.User;
 import com.group06.music_app.user.UserRepository;
@@ -209,4 +211,26 @@ public class SongService {
         song.setDeleted(true);
         songRepository.save(song);
     }
+
+    public Boolean handleClickLikeSong(Long songId, Authentication currentUser) {
+        User user = (User) currentUser.getPrincipal();
+        Song song = findSongById(songId);
+        Optional<SongLike> existingLikeOpt = song.getSongLikes()
+                .stream()
+                .filter(like -> like.getUser().getId().equals(user.getId()))
+                .findFirst();
+        if(existingLikeOpt.isPresent()) {
+            SongLike existingLike = existingLikeOpt.get();
+            song.getSongLikes().remove(existingLike);
+        } else {
+            SongLike songLike = SongLike.builder()
+                    .user(user)
+                    .song(song)
+                    .build();
+            song.getSongLikes().add(songLike);
+        }
+        songRepository.save(song);
+        return existingLikeOpt.isEmpty();
+    }
+
 }

@@ -11,6 +11,7 @@ viewpager2 = "1.0.0"
 retrofit2 = "2.9.0"
 gson = "2.9.0"
 glide = "4.16.0"
+google-auth = "20.7.0"
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -24,5 +25,6 @@ retrofit2 = { group = "com.squareup.retrofit2", name = "retrofit", version.ref =
 gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "gson" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
+google-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "google-auth" }
 [plugins]
 android-application = { id = "com.android.application", version = "8.8.0" }

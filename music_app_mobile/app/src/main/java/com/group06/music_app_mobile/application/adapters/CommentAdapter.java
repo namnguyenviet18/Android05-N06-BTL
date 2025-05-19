@@ -37,8 +37,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     private OnExpandChildCommentListener onExpandChildCommentListener;
 
     private OnReplyClickListener onReplyClickListener;
-    private CommentAdapter childAdapter;
-
     private Comment root;
 
     private int rootPosition = -1;;
@@ -136,6 +134,9 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
 
     private void setExpandChildState(ItemCommentBinding binding, Comment comment, int position) {
+        if(isChildComment) {
+            return;
+        }
         if(!comment.isShowDescendants()) {
             binding.recyclerViewFeedback.setAdapter(null);
             binding.recyclerViewFeedback.setVisibility(View.GONE);
@@ -143,7 +144,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         } else {
             binding.recyclerViewFeedback.setVisibility(View.VISIBLE);
             binding.viewFeedback.setText("Hide responses");
-            childAdapter = new CommentAdapter(
+            CommentAdapter childAdapter = new CommentAdapter( // LOCAL adapter
                     comment.getDescendants(),
                     context,
                     true,
@@ -151,10 +152,12 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                     onExpandChildCommentListener,
                     onReplyClickListener,
                     comment,
-                    rootPosition
+                    position
             );
             binding.recyclerViewFeedback.setAdapter(childAdapter);
-            onExpandChildCommentListener.displayChild(comment, position);
+            if(comment.getDescendantCount() > comment.getDescendants().size()) {
+                onExpandChildCommentListener.displayChild(comment, position);
+            }
         }
     }
     private void displayCommentInfo(CommentViewHolder holder, Comment comment) {

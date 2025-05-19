@@ -25,4 +25,8 @@
     <color name="white">#FFFFFF</color>
     <color name="teal_700">#3399FF</color>
     <color name="gray_light">#CCCCCC</color>
+    <color name="checkbox_tint">#FF6F61</color>
+    <color name="input_background_color">#2A2A2A</color>
+    <color name="button_color">#00C4B4</color>
+    <color name="hint_color">#BBBBBB</color>
 </resources>

@@ -58,6 +58,7 @@ public class PlayActivity extends AppCompatActivity {
                 .coverImageUrl("https://img.tripi.vn/cdn-cgi/image/width=700,height=700/https://gcs.tripi.vn/public-tripi/tripi-feed/img/482786dLt/anh-mo-ta.png")
                 .lyrics("/dee2s8sgk/raw/upload/v1745935865/audios/lyric_em_cua_ngay_home_qua_m0vjvx.json")
                 .commentCount(20)
+                .name("Em của ngày hôm qua")
                 .isPublic(true)
                 .isDeleted(false)
                 .isLiked(false)
@@ -80,6 +81,7 @@ public class PlayActivity extends AppCompatActivity {
     }
 
     private void init() {
+        displayInfo();
         setNoRepeat();
         selectedParams = binding.dot0.getLayoutParams();
         unselectedParams = binding.dot1.getLayoutParams();
@@ -94,6 +96,21 @@ public class PlayActivity extends AppCompatActivity {
         binding.dot0.setLayoutParams(selectedParams);
         binding.dot0.setLayoutParams(unselectedParams);
         whenDot0Selected();
+    }
+
+    public void displayInfo() {
+        binding.songName.setText(song.getName());
+        binding.likeText.setText(String.valueOf(song.getLikeCount()));
+        binding.commentText.setText(String.valueOf(song.getCommentCount()) + " comments");
+        StringBuilder songAuthor = new StringBuilder();
+        if(song.getSingerName() != null && !song.getSingerName().trim().isEmpty()) {
+            songAuthor.append("Performed by ").append(song.getSingerName());
+        }
+        if(song.getSingerName() != null && !song.getSingerName().trim().isEmpty()) {
+            songAuthor.append(", composed by ")
+                    .append(song.getAuthorName());
+        }
+        binding.songAuthor.setText(songAuthor.toString());
     }
 
     private void initMediaPlayer() {
