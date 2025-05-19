@@ -1,10 +1,11 @@
 package com.group06.music_app.song.response;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class SongResponse {
     private Long id;
-    private String createdDate;
     private String name;
     private String authorName;
     private String singerName;
@@ -13,6 +14,7 @@ public class SongResponse {
     private String lyrics;
     private String fileName;
     private String fileExtension;
+    private Long duration;
     private boolean isPublic;
     private boolean isDeleted;
 

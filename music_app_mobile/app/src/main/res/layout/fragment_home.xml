@@ -227,18 +227,21 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Recently Play"
+            android:text="All Songs"
             android:textColor="@color/text_white"
             android:textSize="16sp"
             android:textStyle="bold"/>
 
         <TextView
+            android:id="@+id/seeAllTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="See all"
             android:textColor="@color/text_white"
             android:textSize="16sp"
-            android:gravity="center_vertical"/>
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true"/>
 
     </LinearLayout>
 
@@ -246,181 +249,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerRecent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="10dp">
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="12dp"/>
 
-            <!-- Song 1 -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="12dp"
-                android:background="@drawable/rounded_list"
-                android:layout_marginBottom="12dp">
-
-                <ImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:src="@drawable/meha"
-                    android:scaleType="centerCrop"
-                    android:background="@drawable/image_radius"
-                    android:layout_marginEnd="16dp"
-                    android:clipToOutline="true"/>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Mehabooba"
-                        android:textColor="@color/text_white"
-                        android:textStyle="bold"
-                        android:textSize="12sp"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Kgf Chapter 2 • Ananya Bhat"
-                        android:textColor="@color/text_white"
-                        android:textSize="12sp"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="2:50 / 3:50"
-                        android:textColor="@color/text_white"
-                        android:textSize="12sp"/>
-
-                </LinearLayout>
-
-                <ImageView
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:src="@drawable/ic_play_fill"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="8dp"
-                    app:tint="#00C4B4" />
-
-            </LinearLayout>
-
-            <!-- Song 2 -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="12dp"
-                android:background="@drawable/rounded_list"
-                android:layout_marginBottom="12dp">
-
-                <ImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:src="@drawable/ana"
-                    android:scaleType="centerCrop"
-                    android:background="@drawable/image_radius"
-                    android:layout_marginEnd="16dp"
-                    android:clipToOutline="true"/>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Adiyee"
-                        android:textColor="@color/text_white"
-                        android:textStyle="bold"
-                        android:textSize="12sp"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Bachelor • Ananya Bhat"
-                        android:textColor="@color/text_white"
-                        android:textSize="12sp"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="2:50 / 3:50"
-                        android:textColor="@color/text_white"
-                        android:textSize="12sp"/>
-                </LinearLayout>
-                <ImageView
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:src="@drawable/ic_play_fill"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="8dp"
-                    app:tint="#00C4B4" />
-            </LinearLayout>
-
-            <!-- Song 3 -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="12dp"
-                android:background="@drawable/rounded_list">
-
-                <ImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:src="@drawable/adipene"
-                    android:scaleType="centerCrop"
-                    android:background="@drawable/image_radius"
-                    android:layout_marginEnd="16dp"
-                    android:clipToOutline="true"/>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Adi pennee"
-                        android:textColor="@color/text_white"
-                        android:textStyle="bold"
-                        android:textSize="12sp"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Adi penee • Ananya Bhat"
-                        android:textColor="@color/text_white"
-                        android:textSize="12sp"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="2:50 / 3:50"
-                        android:textColor="@color/text_white"
-                        android:textSize="12sp"/>
-                </LinearLayout>
-                <ImageView
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:src="@drawable/ic_play_fill"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="8dp"
-                    app:tint="#00C4B4" />
-            </LinearLayout>
-        </LinearLayout>
     </ScrollView>
 </LinearLayout>
