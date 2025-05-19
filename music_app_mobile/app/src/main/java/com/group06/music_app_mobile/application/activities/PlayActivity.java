@@ -14,6 +14,8 @@ import androidx.core.content.ContextCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.group06.music_app_mobile.R;
+import com.group06.music_app_mobile.api_client.ApiClient;
+import com.group06.music_app_mobile.api_client.api.SongApi;
 import com.group06.music_app_mobile.app_utils.enums.PlayMode;
 import com.group06.music_app_mobile.application.adapters.PlayPagerAdapter;
 import com.group06.music_app_mobile.application.fragments.CommentBottomSheetFragment;
@@ -24,6 +26,9 @@ import com.group06.music_app_mobile.models.Song;
 import java.io.IOException;
 
 import lombok.Getter;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class PlayActivity extends AppCompatActivity {
 
@@ -33,6 +38,8 @@ public class PlayActivity extends AppCompatActivity {
     private boolean isPrepared = false;
     @Getter
     private MediaPlayer mediaPlayer;
+
+    private SongApi songApi;
 
     private Handler handler = new Handler();
 
@@ -78,10 +85,12 @@ public class PlayActivity extends AppCompatActivity {
         setUpPlayButton();
         setUpRepeatButton();
         setUpCommentButton();
+        setupButtonLike();
     }
 
     private void init() {
         displayInfo();
+        songApi = ApiClient.getClient(this).create(SongApi.class);
         setNoRepeat();
         selectedParams = binding.dot0.getLayoutParams();
         unselectedParams = binding.dot1.getLayoutParams();
@@ -100,7 +109,7 @@ public class PlayActivity extends AppCompatActivity {
 
     public void displayInfo() {
         binding.songName.setText(song.getName());
-        binding.likeText.setText(String.valueOf(song.getLikeCount()));
+        binding.likeText.setText(String.valueOf(song.getLikeCount()) + " likes");
         binding.commentText.setText(String.valueOf(song.getCommentCount()) + " comments");
         StringBuilder songAuthor = new StringBuilder();
         if(song.getSingerName() != null && !song.getSingerName().trim().isEmpty()) {
@@ -111,6 +120,11 @@ public class PlayActivity extends AppCompatActivity {
                     .append(song.getAuthorName());
         }
         binding.songAuthor.setText(songAuthor.toString());
+        if (song.isLiked()) {
+            binding.likeIcon.setImageResource(R.drawable.ic_heart_fill);
+        } else {
+            binding.likeIcon.setImageResource(R.drawable.ic_heart_outline);
+        }
     }
 
     private void initMediaPlayer() {
@@ -135,6 +149,34 @@ public class PlayActivity extends AppCompatActivity {
 
         mediaPlayer.setOnCompletionListener(mp -> setPlayIcon());
 
+    }
+
+    private void setupButtonLike() {
+        binding.like.setOnClickListener(view -> handleClickLikeSong());
+    }
+
+    private void handleClickLikeSong() {
+        if(song == null) return;
+        Call<Boolean> call = songApi.handleClickLikeSong(song.getId());
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                if(response.code() == 200 && response.body() != null) {
+                    song.setLiked(response.body());
+                    if(song.isLiked()) {
+                        song.setLikeCount(song.getLikeCount() + 1);
+                    } else {
+                        song.setLikeCount(song.getLikeCount() - 1);
+                    }
+                    displayInfo();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Boolean> call, Throwable t) {
+
+            }
+        });
     }
 
     private void setUpPlayButton() {

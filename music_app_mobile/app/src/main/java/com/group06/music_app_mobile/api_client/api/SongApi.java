@@ -9,9 +9,13 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface SongApi {
-    @GET("/song/file/load")
+
+    @GET("song/like/{song-id}")
+    Call<Boolean> handleClickLikeSong(@Path("song-id") Long songId);
+
+    @GET("song/file/load")
     Call<ResponseBody> loadFile(@Query("fullUrl") String fullUrl);
 
-    @GET("/song/{id}")
+    @GET("song/{id}")
     Call<Song> getSongById(@Path("id") Long songId);
 }
