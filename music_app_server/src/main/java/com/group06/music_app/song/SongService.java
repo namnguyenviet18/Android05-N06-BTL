@@ -1,8 +1,4 @@
 package com.group06.music_app.song;
-
-import com.group06.music_app.comment.Comment;
-import com.group06.music_app.comment.CommentLike;
-import com.group06.music_app.comment.responses.CommentResponse;
 import com.group06.music_app.song.response.FileStoreResult;
 import com.group06.music_app.song.response.SongResponse;
 import com.group06.music_app.user.User;
@@ -36,9 +32,6 @@ public class SongService {
 
     @Autowired
     private final SongRepository songRepository;
-
-    @Autowired
-    private final UserRepository userRepository;
 
     public Boolean handleClickLikeSong(Long songId, Authentication currentUser) {
         User user = (User) currentUser.getPrincipal();

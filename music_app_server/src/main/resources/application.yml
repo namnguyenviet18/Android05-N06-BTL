@@ -57,7 +57,7 @@ springdoc:
   default-consumes-media-type: application/json # Không ảnh hưởng đến multipart
   swagger-ui:
     supportedSubmitMethods: [get, post, put, delete]
-    path: /swagger-ui.html
+    path: /swagger-ui
 
 server:
   servlet:

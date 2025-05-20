@@ -5,6 +5,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.group06.music_app_mobile.api_client.api.SongApi;
+import com.group06.music_app_mobile.api_client.responses.SongResponse;
 import com.group06.music_app_mobile.models.Song;
 
 
@@ -41,15 +42,15 @@ public class DownloadUtil {
             }
 
             // Gọi API để lấy chi tiết bài hát
-            Call<Song> call = songApi.getSongById(songId);
-            Response<Song> response = call.execute();
+            Call<SongResponse> call = songApi.getSongById(songId);
+            Response<SongResponse> response = call.execute();
 
             if (!response.isSuccessful() || response.body() == null) {
                 Log.e(TAG, "Không thể lấy chi tiết bài hát với ID: " + songId + " - Mã lỗi: " + response.code());
                 return false;
             }
 
-            Song song = response.body();
+            SongResponse song = response.body();
 
             // Kiểm tra các URL
             String audioUrl = song.getAudioUrl();
