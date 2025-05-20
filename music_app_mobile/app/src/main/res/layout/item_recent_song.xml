@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="12dp"
+    android:background="@drawable/rounded_list"
+    android:layout_marginBottom="12dp">
+
+    <ImageView
+        android:id="@+id/imgCover"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/meha"
+        android:scaleType="centerCrop"
+        android:background="@drawable/image_radius"
+        android:layout_marginEnd="16dp"
+        android:clipToOutline="true"/>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/txtTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Song Name"
+            android:textColor="@color/text_white"
+            android:textStyle="bold"
+            android:textSize="12sp"/>
+
+        <TextView
+            android:id="@+id/txtSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Author • Singer"
+            android:textColor="@color/text_white"
+            android:textSize="12sp"/>
+
+        <TextView
+            android:id="@+id/txtDuration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="0:00 / 0:00"
+            android:textColor="@color/text_white"
+            android:textSize="12sp"/>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imgPlay"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:src="@drawable/ic_pause_fill"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="8dp"
+        app:tint="#00C4B4" />
+</LinearLayout>

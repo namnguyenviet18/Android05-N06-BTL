@@ -63,3 +63,7 @@ server:
   servlet:
     context-path: /api/v1/
   port: 8088
+
+logging:
+  level:
+    org.springframework.web: DEBUG

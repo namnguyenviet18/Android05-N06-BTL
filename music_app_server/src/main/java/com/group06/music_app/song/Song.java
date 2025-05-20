@@ -52,6 +52,9 @@ public class Song extends BaseEntity {
     @Column(nullable = false)
     private String fileExtension;
 
+    @Column(nullable = false)
+    private Long duration;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
