@@ -151,13 +151,15 @@ public class SongController {
         if (!coverImage.getOriginalFilename().matches(".*\\.(png|jpeg|jpg)")) {
             return ResponseEntity.badRequest().body("File ảnh bìa phải là định dạng png hoặc jpeg");
         }
-        if (!lyricFile.getOriginalFilename().endsWith(".json")) {
+        if (!lyricFile.getContentType().startsWith("application/json")) {
             return ResponseEntity.badRequest().body("File lyric phải là định dạng json");
         }
+
 
         FileStoreResult audioFilePath = null;
         FileStoreResult coverImagePath = null;
         FileStoreResult lyricFilePath = null;
+
 
         try {
             // Store files only after validation passes
