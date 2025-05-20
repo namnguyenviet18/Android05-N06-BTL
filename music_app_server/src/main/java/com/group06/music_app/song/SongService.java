@@ -37,6 +37,30 @@ public class SongService {
     @Autowired
     private final SongRepository songRepository;
 
+    @Autowired
+    private final UserRepository userRepository;
+
+    public Boolean handleClickLikeSong(Long songId, Authentication currentUser) {
+        User user = (User) currentUser.getPrincipal();
+        Song song = findSongById(songId);
+        Optional<SongLike> existingLikeOpt = song.getSongLikes()
+                .stream()
+                .filter(like -> like.getUser().getId().equals(user.getId()))
+                .findFirst();
+        if(existingLikeOpt.isPresent()) {
+            SongLike existingLike = existingLikeOpt.get();
+            song.getSongLikes().remove(existingLike);
+        } else {
+            SongLike songLike = SongLike.builder()
+                    .user(user)
+                    .song(song)
+                    .build();
+            song.getSongLikes().add(songLike);
+        }
+        songRepository.save(song);
+        return existingLikeOpt.isEmpty();
+    }
+
     public Song findSongById(Long id) {
         Optional<Song> songOpt = songRepository.findById(id);
         if(songOpt.isEmpty()) {
@@ -256,4 +280,5 @@ public class SongService {
         song.setDeleted(true);
         songRepository.save(song);
     }
+
 }

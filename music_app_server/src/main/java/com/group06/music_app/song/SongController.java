@@ -26,6 +26,14 @@ public class SongController {
     @Autowired
     private SongService songService;
 
+    @GetMapping("/like/{song-id}")
+    public ResponseEntity<Boolean> handleClickLikeSong(
+            @PathVariable(name = "song-id") Long songId,
+            Authentication currentUser
+    ) {
+        return ResponseEntity.ok(songService.handleClickLikeSong(songId, currentUser));
+    }
+
     @Value("${application.file.uploads.photos-output-path}")
     private String uploadDir;
 

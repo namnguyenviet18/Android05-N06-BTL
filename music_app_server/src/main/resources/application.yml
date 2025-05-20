@@ -47,7 +47,7 @@ application:
       refresh-token:
         expiration: 604800000 # 7 days
     google:
-      android-client-id: 1078270987220-ugprd9k9gh03ks34acc1jg5jcfddhl3h.apps.googleusercontent.com
+      client-id: 1078270987220-iq6dluklb03qlrsc4rgmfp6hireno8cn.apps.googleusercontent.com
   file:
     uploads:
       photos-output-path: ./uploads

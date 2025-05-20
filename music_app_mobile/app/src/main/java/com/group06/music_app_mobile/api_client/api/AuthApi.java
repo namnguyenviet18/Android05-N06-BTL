@@ -1,6 +1,7 @@
 package com.group06.music_app_mobile.api_client.api;
 
 import com.group06.music_app_mobile.api_client.requests.AuthenticationRequest;
+import com.group06.music_app_mobile.api_client.requests.GoogleAuthRequest;
 import com.group06.music_app_mobile.api_client.requests.RegisterRequest;
 import com.group06.music_app_mobile.api_client.requests.VerifyOtpRequest;
 import com.group06.music_app_mobile.api_client.responses.AuthenticationResponse;
@@ -31,4 +32,7 @@ public interface AuthApi {
     Call<AuthenticationResponse> refreshToken(
             @Header("Authorization") String refreshToken
     );
+
+    @POST("auth/authenticate/google")
+    Call<AuthenticationResponse> authenticateWithGoogle(@Body GoogleAuthRequest request);
 }
