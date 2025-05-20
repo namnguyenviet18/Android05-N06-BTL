@@ -20,7 +20,23 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.group06.music_app_mobile.app_utils.ServerDestination;
+import com.group06.music_app_mobile.app_utils.StorageService;
 import com.group06.music_app_mobile.databinding.FragmentPlayBinding;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class PlayFragment extends Fragment {
 
@@ -31,7 +47,6 @@ public class PlayFragment extends Fragment {
 
     private static final int PERMISSION_REQUEST_CODE = 100;
 
-    // ActivityResultLauncher để chọn file audio
     private final ActivityResultLauncher<Intent> audioPickerLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -43,7 +58,6 @@ public class PlayFragment extends Fragment {
             }
     );
 
-    // ActivityResultLauncher để chọn file hình ảnh
     private final ActivityResultLauncher<Intent> imagePickerLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -55,7 +69,6 @@ public class PlayFragment extends Fragment {
             }
     );
 
-    // ActivityResultLauncher để chọn file lyric
     private final ActivityResultLauncher<Intent> lyricPickerLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -79,19 +92,10 @@ public class PlayFragment extends Fragment {
     }
 
     private void setupClickListeners() {
-        // Xử lý click trực tiếp vào EditText cho file audio
         binding.editTextAudioFile.setOnClickListener(v -> selectAudioFile());
-
-        // Xử lý click trực tiếp vào EditText cho cover image
         binding.editTextCoverImage.setOnClickListener(v -> selectCoverImage());
-
-        // Xử lý click trực tiếp vào EditText cho lyric file
         binding.editTextLyric.setOnClickListener(v -> selectLyricFile());
-
-        // Xử lý nút back trên toolbar
         binding.toolbar.setNavigationOnClickListener(v -> requireActivity().onBackPressed());
-
-        // Xử lý nút Add Music
         binding.buttonAddMusic.setOnClickListener(v -> addMusic());
     }
 
@@ -110,9 +114,9 @@ public class PlayFragment extends Fragment {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(requireContext(), "Permission Granted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Quyền được cấp", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(requireContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Quyền bị từ chối", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -121,36 +125,27 @@ public class PlayFragment extends Fragment {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("audio/mp3");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-
-        // Thêm các MIME types cho file audio
         String[] mimeTypes = {"audio/mpeg", "audio/mp3"};
         intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-
-        audioPickerLauncher.launch(Intent.createChooser(intent, "Select MP3 File"));
+        audioPickerLauncher.launch(Intent.createChooser(intent, "Chọn file MP3"));
     }
 
     private void selectCoverImage() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image/*");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-
-        // Giới hạn chỉ PNG và JPEG
         String[] mimeTypes = {"image/png", "image/jpeg", "image/jpg"};
         intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-
-        imagePickerLauncher.launch(Intent.createChooser(intent, "Select Image (PNG/JPEG)"));
+        imagePickerLauncher.launch(Intent.createChooser(intent, "Chọn ảnh (PNG/JPEG)"));
     }
 
     private void selectLyricFile() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("application/json");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-
-        // Chỉ cho phép file JSON
         String[] mimeTypes = {"application/json", "text/json"};
         intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-
-        lyricPickerLauncher.launch(Intent.createChooser(intent, "Select JSON File"));
+        lyricPickerLauncher.launch(Intent.createChooser(intent, "Chọn file JSON"));
     }
 
     private String getFileName(Uri uri) {
@@ -177,50 +172,133 @@ public class PlayFragment extends Fragment {
     }
 
     private void addMusic() {
-        // Lấy dữ liệu từ các EditText
         String songName = binding.editTextSongName.getText().toString().trim();
         String authorName = binding.editTextAuthorName.getText().toString().trim();
         String singerName = binding.editTextSingerName.getText().toString().trim();
         boolean isPublic = binding.checkBoxPublic.isChecked();
 
-        // Validate dữ liệu
         if (songName.isEmpty()) {
-            binding.editTextSongName.setError("Song name is required");
+            binding.editTextSongName.setError("Tên bài hát là bắt buộc");
             binding.editTextSongName.requestFocus();
             return;
         }
         if (authorName.isEmpty()) {
-            binding.editTextAuthorName.setError("Author name is required");
+            binding.editTextAuthorName.setError("Tên tác giả là bắt buộc");
             binding.editTextAuthorName.requestFocus();
             return;
         }
         if (singerName.isEmpty()) {
-            binding.editTextSingerName.setError("Singer name is required");
+            binding.editTextSingerName.setError("Tên ca sĩ là bắt buộc");
             binding.editTextSingerName.requestFocus();
             return;
         }
         if (audioFileUri == null) {
-            Toast.makeText(requireContext(), "Please select an MP3 file", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "Vui lòng chọn file MP3", Toast.LENGTH_SHORT).show();
             return;
         }
         if (coverImageUri == null) {
-            Toast.makeText(requireContext(), "Please select a cover image", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "Vui lòng chọn ảnh bìa", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Upload files to server
         uploadMusicToServer(songName, authorName, singerName, isPublic);
     }
 
     private void uploadMusicToServer(String songName, String authorName, String singerName, boolean isPublic) {
-        // TODO: Implement upload logic
-        Toast.makeText(requireContext(), "Uploading...", Toast.LENGTH_SHORT).show();
+        String authToken = StorageService.getInstance(requireContext()).getAccessToken();
+        if (authToken == null || authToken.isEmpty()) {
+            Toast.makeText(requireContext(), "Vui lòng đăng nhập để tiếp tục", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        // Giả lập upload thành công
-        Toast.makeText(requireContext(), "Music added successfully!", Toast.LENGTH_SHORT).show();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
+                .writeTimeout(120, java.util.concurrent.TimeUnit.SECONDS)
+                .readTimeout(120, java.util.concurrent.TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
+                .protocols(Arrays.asList(Protocol.HTTP_1_1, Protocol.HTTP_2)) // Ép dùng HTTP/1.1 hoặc HTTP/2
+                .build();
 
-        // Reset form
-        clearForm();
+        try {
+            RequestBody audioBody = createRequestBody(audioFileUri, "audio/mpeg");
+            RequestBody coverImageBody = createRequestBody(coverImageUri, "image/jpeg");
+            RequestBody lyricBody =  createRequestBody(lyricFileUri, "application/json") ;
+
+            MultipartBody.Builder builder = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("songName", songName)
+                    .addFormDataPart("authorName", authorName)
+                    .addFormDataPart("singerName", singerName)
+                    .addFormDataPart("isPublic", String.valueOf(isPublic))
+                    .addFormDataPart("audioFile", getFileName(audioFileUri), audioBody)
+                    .addFormDataPart("coverImage", getFileName(coverImageUri), coverImageBody);
+
+            if (lyricBody != null) {
+                builder.addFormDataPart("lyricFile", getFileName(lyricFileUri), lyricBody);
+            } else {
+                MediaType jsonMediaType = MediaType.get("application/json; charset=utf-8");
+                builder.addFormDataPart("lyricFile", "empty.json",
+                        RequestBody.create(jsonMediaType, "{}"));
+            }
+
+            RequestBody requestBody = builder.build();
+
+            Request request = new Request.Builder()
+                    .url("http://" + ServerDestination.SERVER_HOST + ":" + ServerDestination.SERVER_PORT + "/api/v1/song/add")
+                    .addHeader("Authorization", "Bearer " + authToken)
+                    .post(requestBody)
+                    .build();
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    requireActivity().runOnUiThread(() -> {
+                        Toast.makeText(requireContext(), "Lỗi khi tải lên: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                    });
+                }
+
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    requireActivity().runOnUiThread(() -> {
+                        if (response.isSuccessful()) {
+                            Toast.makeText(requireContext(), "Thêm bài hát thành công!", Toast.LENGTH_SHORT).show();
+                            clearForm();
+                        } else {
+                            String errorBody = response.body() != null ? response.body().toString() : "Lỗi không xác định";
+                            Toast.makeText(requireContext(), "Lỗi: " + errorBody + " (Code: " + response.code() + ")", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            });
+
+        } catch (Exception e) {
+            requireActivity().runOnUiThread(() ->
+                    Toast.makeText(requireContext(), "Lỗi: " + e.getMessage(), Toast.LENGTH_LONG).show());
+        }
+    }
+
+    private RequestBody createRequestBody(Uri uri, String mediaType) throws IOException {
+        InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);
+        if (inputStream == null) {
+            throw new IOException("Không thể mở file");
+        }
+        return new RequestBody() {
+            @Override
+            public MediaType contentType() {
+                return MediaType.get(mediaType);
+            }
+
+            @Override
+            public void writeTo(@NonNull okio.BufferedSink sink) throws IOException {
+                byte[] buffer = new byte[8192];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    sink.write(buffer, 0, bytesRead);
+                }
+                inputStream.close();
+            }
+        };
     }
 
     private void clearForm() {

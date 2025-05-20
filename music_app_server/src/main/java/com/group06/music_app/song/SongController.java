@@ -142,10 +142,10 @@ public class SongController {
         if (!coverImage.getOriginalFilename().matches(".*\\.(png|jpeg|jpg)")) {
             return ResponseEntity.badRequest().body("File ảnh bìa phải là định dạng png hoặc jpeg");
         }
-        if (!lyricFile.getOriginalFilename().endsWith(".json")) {
+        if (!lyricFile.getContentType().startsWith("application/json")) {
             return ResponseEntity.badRequest().body("File lyric phải là định dạng json");
         }
-
+        System.out.println("da them den day");
         String audioFilePath = null;
         String coverImagePath = null;
         String lyricFilePath = null;
