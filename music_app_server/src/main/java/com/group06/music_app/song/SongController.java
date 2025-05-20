@@ -1,5 +1,6 @@
 package com.group06.music_app.song;
 
+import com.group06.music_app.song.response.FileStoreResult;
 import com.group06.music_app.song.response.SongResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,17 +26,25 @@ public class SongController {
     @Autowired
     private SongService songService;
 
+    @GetMapping("/like/{song-id}")
+    public ResponseEntity<Boolean> handleClickLikeSong(
+            @PathVariable(name = "song-id") Long songId,
+            Authentication currentUser
+    ) {
+        return ResponseEntity.ok(songService.handleClickLikeSong(songId, currentUser));
+    }
+
     @Value("${application.file.uploads.photos-output-path}")
     private String uploadDir;
 
     // API 1: Upload file, nhận MultipartFile
     @PostMapping(value = "file/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().body("File không được rỗng");
         }
         try {
-            String fileUrl = songService.storeFile(file);
+            FileStoreResult fileUrl = songService.storeFile(file);
             return ResponseEntity.ok(fileUrl);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Lỗi khi lưu file: " + e.getMessage());
@@ -110,7 +119,7 @@ public class SongController {
     }
 
     @PostMapping(value = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> addMusic(
+    public ResponseEntity<?> addMusic(
             @RequestParam("songName") String songName,
             @RequestParam("authorName") String authorName,
             @RequestParam("singerName") String singerName,
@@ -145,10 +154,12 @@ public class SongController {
         if (!lyricFile.getContentType().startsWith("application/json")) {
             return ResponseEntity.badRequest().body("File lyric phải là định dạng json");
         }
-        System.out.println("da them den day");
-        String audioFilePath = null;
-        String coverImagePath = null;
-        String lyricFilePath = null;
+
+
+        FileStoreResult audioFilePath = null;
+        FileStoreResult coverImagePath = null;
+        FileStoreResult lyricFilePath = null;
+
 
         try {
             // Store files only after validation passes
@@ -159,26 +170,25 @@ public class SongController {
             // Save song to database
             Song savedSong = songService.saveSong(
                     songName, authorName, singerName,
-                    audioFilePath, coverImagePath, lyricFilePath,
-                    isPublic, currentUser
+                    audioFilePath.getFilePath(), coverImagePath.getFilePath(), lyricFilePath.getFilePath(),
+                    isPublic, audioFilePath.getDuration(), currentUser
             );
             // Return success message
             String response = String.format("Bài hát đã được thêm: Audio: %s, Cover: %s, Lyric: %s",
                     savedSong.getAudioUrl(), savedSong.getCoverImageUrl(), savedSong.getLyrics());
 
             System.out.println(response);
-            return ResponseEntity.ok(response);
-
+            SongResponse responseDTO = songService.toDto(savedSong);
+            return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {
-            System.out.println(e);
             if (audioFilePath != null) {
-                songService.deleteFile(audioFilePath);
+                songService.deleteFile(audioFilePath.getFilePath());
             }
             if (coverImagePath != null) {
-                songService.deleteFile(coverImagePath);
+                songService.deleteFile(coverImagePath.getFilePath());
             }
             if (lyricFilePath != null) {
-                songService.deleteFile(lyricFilePath);
+                songService.deleteFile(lyricFilePath.getFilePath());
             }
             return ResponseEntity.status(500).body("Lỗi khi thêm bài hát: " + e.getMessage());
         }

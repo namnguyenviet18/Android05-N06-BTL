@@ -32,4 +32,72 @@ public class Song extends BaseEntity {
     private boolean isLiked;
     private User user;
     private long viewCount;
+
+    public String getName() {
+        return name;
+    }
+
+    public String getAuthorName() {
+        return authorName;
+    }
+
+    public String getSingerName() {
+        return singerName;
+    }
+
+    public String getAudioUrl() {
+        return audioUrl;
+    }
+
+    public String getCoverImageUrl() {
+        return coverImageUrl;
+    }
+
+    public String getLyrics() {
+        return lyrics;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public String getFileExtension() {
+        return fileExtension;
+    }
+
+    public long getLikeCount() {
+        return likeCount;
+    }
+
+    public long getCommentCount() {
+        return commentCount;
+    }
+
+    public List<SongLike> getLikes() {
+        return likes;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public boolean isLiked() {
+        return isLiked;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public long getViewCount() {
+        return viewCount;
+    }
 }

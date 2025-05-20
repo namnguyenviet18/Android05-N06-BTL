@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/background_color"
+    android:background="@color/app_background"
     android:padding="16dp">
 
     <!-- Header Section with Rounded Image and Name Below -->
@@ -56,6 +56,7 @@
             android:gravity="center_vertical">
 
             <TextView
+                android:id="@+id/account_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -79,6 +80,7 @@
             android:gravity="center_vertical">
 
             <TextView
+                android:id="@+id/account_email"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

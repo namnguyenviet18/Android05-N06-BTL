@@ -1,26 +1,29 @@
 package com.group06.music_app.song;
-
+import com.group06.music_app.song.response.FileStoreResult;
 import com.group06.music_app.song.response.SongResponse;
 import com.group06.music_app.user.User;
-import com.group06.music_app.user.UserRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.apache.tika.exception.TikaException;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.parser.Parser;
+import org.apache.tika.parser.mp3.Mp3Parser;
+import org.apache.tika.sax.BodyContentHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,8 +33,26 @@ public class SongService {
     @Autowired
     private final SongRepository songRepository;
 
-    @Autowired
-    private final UserRepository userRepository;
+    public Boolean handleClickLikeSong(Long songId, Authentication currentUser) {
+        User user = (User) currentUser.getPrincipal();
+        Song song = findSongById(songId);
+        Optional<SongLike> existingLikeOpt = song.getSongLikes()
+                .stream()
+                .filter(like -> like.getUser().getId().equals(user.getId()))
+                .findFirst();
+        if(existingLikeOpt.isPresent()) {
+            SongLike existingLike = existingLikeOpt.get();
+            song.getSongLikes().remove(existingLike);
+        } else {
+            SongLike songLike = SongLike.builder()
+                    .user(user)
+                    .song(song)
+                    .build();
+            song.getSongLikes().add(songLike);
+        }
+        songRepository.save(song);
+        return existingLikeOpt.isEmpty();
+    }
 
     public Song findSongById(Long id) {
         Optional<Song> songOpt = songRepository.findById(id);
@@ -55,18 +76,40 @@ public class SongService {
         }
     }
 
-    public String storeFile(MultipartFile file) {
+    public FileStoreResult storeFile(MultipartFile file) {
         try {
             String mimeType = file.getContentType();
-            System.out.println(mimeType);
             String subDir = getSubDirectory(mimeType);
-            System.out.println(subDir);
             String fileName = UUID.randomUUID().toString() + getFileExtension(file.getOriginalFilename());
             Path filePath = Paths.get(uploadDir, subDir, fileName);
             Files.write(filePath, file.getBytes());
-            return "/upload/" + subDir + "/" + fileName;
+
+            Long duration = null;
+            if (mimeType != null && mimeType.startsWith("audio/")) {
+                duration = getAudioDuration(file);
+            }
+
+            return new FileStoreResult("/upload/" + subDir + "/" + fileName, duration);
         } catch (IOException e) {
             throw new RuntimeException("Lỗi khi lưu file!", e);
+        }
+    }
+
+    private Long getAudioDuration(MultipartFile file) {
+        try {
+            BodyContentHandler handler = new BodyContentHandler();
+            Metadata metadata = new Metadata();
+            Parser parser = new Mp3Parser();
+            parser.parse(file.getInputStream(), handler, metadata, new org.apache.tika.parser.ParseContext());
+
+            String durationStr = metadata.get("xmpDM:duration");
+            if (durationStr != null) {
+                return (long) (Double.parseDouble(durationStr) * 1000);
+            }
+            return null;
+        } catch (IOException | SAXException | TikaException e) {
+            System.err.println("Lỗi khi lấy thời lượng audio: " + e.getMessage());
+            return null;
         }
     }
 
@@ -123,7 +166,7 @@ public class SongService {
     @Transactional
     public Song saveSong(String songName, String authorName, String singerName,
                          String audioFilePath, String coverImagePath, String lyricFilePath,
-                         boolean isPublic, Authentication currentUser) throws Exception {
+                         boolean isPublic, long duration, Authentication currentUser) throws Exception {
         User user = (User) currentUser.getPrincipal();
 
         // Extract file information to get filename, fileextension
@@ -143,6 +186,7 @@ public class SongService {
                 .isDeleted(false)
                 .fileName(audioFileName)
                 .fileExtension(audioFileExtension)
+                .duration(duration)
                 .user(user)
                 .build();
 
@@ -151,22 +195,23 @@ public class SongService {
 
     @Transactional(readOnly = true)
     public List<SongResponse> getAllSongs() {
-        return songRepository.findByIsDeletedFalse().stream().map(song -> {
-            SongResponse dto = new SongResponse();
-            dto.setId(song.getId());
-            dto.setCreatedDate(song.getCreatedDate().toString());
-            dto.setName(song.getName());
-            dto.setAuthorName(song.getAuthorName());
-            dto.setSingerName(song.getSingerName());
-            dto.setAudioUrl(song.getAudioUrl());
-            dto.setCoverImageUrl(song.getCoverImageUrl());
-            dto.setLyrics(song.getLyrics());
-            dto.setFileName(song.getFileName());
-            dto.setFileExtension(song.getFileExtension());
-            dto.setIsPublic(song.isPublic());
-            dto.setIsDeleted(song.isDeleted());
-            return dto;
-        }).collect(Collectors.toList());
+        return songRepository.findByIsDeletedFalse().stream().map(song -> SongResponse.builder()
+                .id(song.getId())
+                .name(song.getName())
+                .authorName(song.getAuthorName())
+                .singerName(song.getSingerName())
+                .audioUrl(song.getAudioUrl())
+                .coverImageUrl(song.getCoverImageUrl())
+                .lyrics(song.getLyrics())
+                .isPublic(song.isPublic())
+                .fileName(song.getFileName())
+                .fileExtension(song.getFileExtension())
+                .duration(song.getDuration())
+                .likeCount(song.getSongLikes() != null ? song.getSongLikes().size() : 0)
+                .commentCount(song.getComments() != null ? song.getComments().size() : 0)
+                .comments(Collections.emptyList())
+                .songLikes(Collections.emptyList())
+                .build()).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
@@ -176,20 +221,39 @@ public class SongService {
         if (song.isDeleted()) {
             throw new Exception("Bài hát đã bị xóa");
         }
-        SongResponse dto = new SongResponse();
-        dto.setId(song.getId());
-        dto.setCreatedDate(song.getCreatedDate().toString());
-        dto.setName(song.getName());
-        dto.setAuthorName(song.getAuthorName());
-        dto.setSingerName(song.getSingerName());
-        dto.setAudioUrl(song.getAudioUrl());
-        dto.setCoverImageUrl(song.getCoverImageUrl());
-        dto.setLyrics(song.getLyrics());
-        dto.setFileName(song.getFileName());
-        dto.setFileExtension(song.getFileExtension());
-        dto.setIsPublic(song.isPublic());
-        dto.setIsDeleted(song.isDeleted());
-        return dto;
+        return SongResponse.builder()
+                .id(song.getId())
+                .name(song.getName())
+                .authorName(song.getAuthorName())
+                .singerName(song.getSingerName())
+                .audioUrl(song.getAudioUrl())
+                .coverImageUrl(song.getCoverImageUrl())
+                .lyrics(song.getLyrics())
+                .isPublic(song.isPublic())
+                .fileName(song.getFileName())
+                .fileExtension(song.getFileExtension())
+                .duration(song.getDuration())
+                .likeCount(song.getSongLikes() != null ? song.getSongLikes().size() : 0)
+                .commentCount(song.getComments() != null ? song.getComments().size() : 0)
+                .comments(Collections.emptyList())
+                .songLikes(Collections.emptyList())
+                .build();
+    }
+
+    public SongResponse toDto(Song song) {
+        return SongResponse.builder()
+                .id(song.getId())
+                .name(song.getName())
+                .authorName(song.getAuthorName())
+                .singerName(song.getSingerName())
+                .audioUrl(song.getAudioUrl())
+                .coverImageUrl(song.getCoverImageUrl())
+                .lyrics(song.getLyrics())
+                .isPublic(song.isPublic())
+                .fileName(song.getFileName())
+                .fileExtension(song.getFileExtension())
+                .duration(song.getDuration())
+                .build();
     }
 
     @Transactional
@@ -209,4 +273,5 @@ public class SongService {
         song.setDeleted(true);
         songRepository.save(song);
     }
+
 }

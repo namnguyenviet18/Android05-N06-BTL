@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -128,16 +129,19 @@ public class LyricFragment extends Fragment {
 
         LoadFileApi api = ApiClient.getClientCloudinary().create(LoadFileApi.class);
         api.getLyric(playActivity.getSong().getLyrics())
-                .enqueue(new Callback<Map<String, String>>() {
+                .enqueue(new Callback<>() {
                     @SuppressLint("NotifyDataSetChanged")
                     @Override
                     public void onResponse(Call<Map<String, String>> call, Response<Map<String, String>> response) {
                         lyrics.clear();
-                        for(Map.Entry<String, String> entry : response.body().entrySet()) {
+                        if (response.body() == null) {
+                            return;
+                        }
+                        for (Map.Entry<String, String> entry : response.body().entrySet()) {
                             lyrics.add(LyricLine.builder()
-                                            .time(entry.getKey())
-                                            .text(entry.getValue())
-                                            .build());
+                                    .time(entry.getKey())
+                                    .text(entry.getValue())
+                                    .build());
                         }
                         lyricAdapter.notifyDataSetChanged();
                     }

@@ -31,7 +31,6 @@ public class CommentService {
                 .song(song)
                 .user(user)
                 .build();
-
         if(request.getParentId() != null) {
             Optional<Comment> parentOpt = repository.findById(request.getParentId());
             if(parentOpt.isPresent()) {
@@ -86,5 +85,15 @@ public class CommentService {
             comment.getCommentLikes().add(commentLike);
         }
         repository.save(comment);
+    }
+
+    public List<CommentResponse> getCommentsBySong(Long songId, Authentication currentUser) {
+        User user = (User) currentUser.getPrincipal();
+        List<Comment> topLevelComments = repository.findByRootIsNullAndSongId(2L);
+
+        return topLevelComments
+                .stream()
+                .map(comment -> mapper.toCommentResponse(comment, user))
+                .toList();
     }
 }
