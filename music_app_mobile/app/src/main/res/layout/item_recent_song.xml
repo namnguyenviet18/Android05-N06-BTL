@@ -57,6 +57,5 @@
         android:layout_height="26dp"
         android:src="@drawable/ic_pause_fill"
         android:layout_gravity="center_vertical"
-        android:layout_marginStart="8dp"
-        app:tint="#00C4B4" />
+        android:layout_marginStart="8dp" />
 </LinearLayout>
