@@ -1,6 +1,11 @@
 package com.group06.music_app.song.response;
+import com.group06.music_app.comment.Comment;
+import com.group06.music_app.comment.responses.CommentResponse;
+import com.group06.music_app.song.SongLike;
 import lombok.Builder;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -17,6 +22,12 @@ public class SongResponse {
     private Long duration;
     private boolean isPublic;
     private boolean isDeleted;
+
+    private int likeCount;
+    private int commentCount;
+    private List<SongLike> songLikes;
+    private List<Comment> comments;
+
 
     public boolean isPublic() {
         return isPublic;

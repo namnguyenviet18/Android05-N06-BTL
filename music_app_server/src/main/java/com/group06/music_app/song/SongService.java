@@ -1,5 +1,8 @@
 package com.group06.music_app.song;
 
+import com.group06.music_app.comment.Comment;
+import com.group06.music_app.comment.CommentLike;
+import com.group06.music_app.comment.responses.CommentResponse;
 import com.group06.music_app.song.response.FileStoreResult;
 import com.group06.music_app.song.response.SongResponse;
 import com.group06.music_app.user.User;
@@ -24,9 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -189,6 +190,10 @@ public class SongService {
                 .fileName(song.getFileName())
                 .fileExtension(song.getFileExtension())
                 .duration(song.getDuration())
+                .likeCount(song.getSongLikes() != null ? song.getSongLikes().size() : 0)
+                .commentCount(song.getComments() != null ? song.getComments().size() : 0)
+                .comments(Collections.emptyList())
+                .songLikes(Collections.emptyList())
                 .build()).collect(Collectors.toList());
     }
 
@@ -211,6 +216,10 @@ public class SongService {
                 .fileName(song.getFileName())
                 .fileExtension(song.getFileExtension())
                 .duration(song.getDuration())
+                .likeCount(song.getSongLikes() != null ? song.getSongLikes().size() : 0)
+                .commentCount(song.getComments() != null ? song.getComments().size() : 0)
+                .comments(Collections.emptyList())
+                .songLikes(Collections.emptyList())
                 .build();
     }
 
