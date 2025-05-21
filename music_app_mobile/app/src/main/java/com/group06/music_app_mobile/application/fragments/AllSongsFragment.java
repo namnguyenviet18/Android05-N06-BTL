@@ -1,6 +1,7 @@
 package com.group06.music_app_mobile.application.fragments;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
@@ -15,8 +16,11 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.Toast;
+import android.Manifest;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,6 +29,7 @@ import com.group06.music_app_mobile.R;
 import com.group06.music_app_mobile.api_client.ApiClient;
 import com.group06.music_app_mobile.api_client.api.SongApi;
 import com.group06.music_app_mobile.api_client.responses.SongResponse;
+import com.group06.music_app_mobile.app_utils.DownloadUtil;
 import com.group06.music_app_mobile.app_utils.enums.DataTransferBetweenScreens;
 import com.group06.music_app_mobile.application.activities.PlayActivity;
 import com.group06.music_app_mobile.application.adapters.HomeAdapter;
@@ -46,12 +51,17 @@ public class AllSongsFragment extends Fragment implements OnSongItemClickListene
     private HomeAdapter adapter;
     private List<Song> songList;
     private List<Song> originalSongList; // Danh sách gốc để lọc
+    private DownloadUtil downloadUtil; // Thêm DownloadUtil
     private EditText searchInput;
+    private static final int STORAGE_PERMISSION_CODE = 100; // Khai báo STORAGE_PERMISSION_CODE
 
     // Khởi tạo những thuộc tính mặc định của điện thoại
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Khởi tạo DownloadUtil
+        downloadUtil = new DownloadUtil(requireContext());
 
         // Đăng ký OnBackPressedCallback để xử lý nút back của điện thoại khi vào màn hình AllSongs
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
@@ -184,9 +194,14 @@ public class AllSongsFragment extends Fragment implements OnSongItemClickListene
             item.setTitle(spanString);
         }
         popupMenu.setOnMenuItemClickListener(item -> {
-            if(item.getItemId() == R.id.download_item) {
-                Toast.makeText(getContext(), "Click download", Toast.LENGTH_SHORT).show();
-            }else if(item.getItemId() == R.id.add_to_playlist_item) {
+            if (item.getItemId() == R.id.download_item) {
+//                if (checkStoragePermissions()) {
+//                    downloadSong(song);
+//                } else {
+//                    requestStoragePermissions();
+//                }
+                    downloadSong(song);
+            } else if (item.getItemId() == R.id.add_to_playlist_item) {
                 Toast.makeText(getContext(), "Add to playlist", Toast.LENGTH_SHORT).show();
             }
             return true;
@@ -194,4 +209,45 @@ public class AllSongsFragment extends Fragment implements OnSongItemClickListene
 
         popupMenu.show();
     }
+
+    private boolean checkStoragePermissions() {
+        return ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestStoragePermissions() {
+        ActivityCompat.requestPermissions(requireActivity(),
+                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
+                STORAGE_PERMISSION_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == STORAGE_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(getContext(), "Quyền lưu trữ đã được cấp, bạn có thể tải bài hát!", Toast.LENGTH_SHORT).show();
+                // Gọi lại downloadSong nếu cần
+                if (getView() != null) {
+                    RecyclerView.ViewHolder viewHolder = recyclerRecent.findViewHolderForAdapterPosition(0); // Lấy viewHolder đầu tiên (tạm thời)
+                    if (viewHolder != null) {
+                        onLongItemClick(songList.get(0), viewHolder.itemView); // Giả sử chọn bài hát đầu tiên
+                    }
+                }
+            } else {
+                Toast.makeText(getContext(), "Quyền lưu trữ bị từ chối, không thể tải bài hát!", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private void downloadSong(Song song) {
+        long songId = song.getId();
+        boolean success = downloadUtil.downloadSongById(requireContext(), songId);
+        if (success) {
+            Toast.makeText(getContext(), "Đã tải bài hát: " + song.getName(), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getContext(), "Tải bài hát thất bại: " + song.getName(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }

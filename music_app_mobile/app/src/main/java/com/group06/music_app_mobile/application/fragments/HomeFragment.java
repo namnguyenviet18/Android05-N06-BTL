@@ -21,6 +21,7 @@ import com.group06.music_app_mobile.R;
 import com.group06.music_app_mobile.api_client.ApiClient;
 import com.group06.music_app_mobile.api_client.api.SongApi;
 import com.group06.music_app_mobile.api_client.responses.SongResponse;
+import com.group06.music_app_mobile.app_utils.DownloadUtil;
 import com.group06.music_app_mobile.app_utils.enums.DataTransferBetweenScreens;
 import com.group06.music_app_mobile.application.activities.PlayActivity;
 import com.group06.music_app_mobile.application.adapters.HomeAdapter;
@@ -41,6 +42,7 @@ public class HomeFragment extends Fragment implements OnSongItemClickListener, O
     private RecyclerView recyclerRecent;
     private HomeAdapter adapter;
     private List<Song> songList;
+    private DownloadUtil downloadUtil; // Thêm DownloadUtil
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,6 +52,8 @@ public class HomeFragment extends Fragment implements OnSongItemClickListener, O
 
         // Khởi tạo Adapter với danh sách rỗng
         songList = new ArrayList<>();
+        // Khởi tạo DownloadUtil
+        downloadUtil = new DownloadUtil(requireContext());
         adapter = new HomeAdapter(songList, this, this);
         recyclerRecent.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerRecent.setAdapter(adapter);
@@ -130,14 +134,28 @@ public class HomeFragment extends Fragment implements OnSongItemClickListener, O
             item.setTitle(spanString);
         }
         popupMenu.setOnMenuItemClickListener(item -> {
-            if(item.getItemId() == R.id.download_item) {
-                Toast.makeText(getContext(), "Click download", Toast.LENGTH_SHORT).show();
-            }else if(item.getItemId() == R.id.add_to_playlist_item) {
+            if (item.getItemId() == R.id.download_item) {
+//                if (checkStoragePermissions()) {
+//                    downloadSong(song);
+//                } else {
+//                    requestStoragePermissions();
+//                }
+                downloadSong(song);}
+            else if(item.getItemId() == R.id.add_to_playlist_item) {
                 Toast.makeText(getContext(), "Add to playlist", Toast.LENGTH_SHORT).show();
             }
             return true;
         });
 
         popupMenu.show();
+    }
+    private void downloadSong(Song song) {
+        long songId = song.getId();
+        boolean success = downloadUtil.downloadSongById(requireContext(), songId);
+        if (success) {
+            Toast.makeText(getContext(), "Đã tải bài hát: " + song.getName(), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getContext(), "Tải bài hát thất bại: " + song.getName(), Toast.LENGTH_SHORT).show();
+        }
     }
 }
