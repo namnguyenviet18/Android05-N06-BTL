@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@color/app_background"
     android:padding="16dp">
@@ -14,15 +15,39 @@
         android:gravity="center"
         android:layout_marginBottom="24dp">
 
-        <ImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@drawable/adipene"
-            android:scaleType="centerCrop"
-            android:background="@drawable/circle_background"
-            android:clipToOutline="true"/>
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
+            <!-- Avatar trong CardView -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_view"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                app:cardCornerRadius="40dp"
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:id="@+id/avatar"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:contentDescription="avatar"
+                    android:src="@drawable/adipene"
+                    android:scaleType="centerCrop" />
+            </androidx.cardview.widget.CardView>
+
+            <!-- Icon edit đè lên avatar -->
+            <ImageView
+                android:id="@+id/edit_avatar"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_edit"
+                android:layout_gravity="bottom|end"
+                android:elevation="8dp"/>
+        </FrameLayout>
+        
         <TextView
+            android:id="@+id/full_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Vikashini vini"
@@ -43,36 +68,78 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Personal information"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:textColor="@color/subtext_color"
             android:layout_marginBottom="8dp"/>
 
-        <!-- Item: Name -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:orientation="horizontal"
-            android:paddingVertical="8dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:gravity="center_vertical">
-
             <TextView
-                android:id="@+id/account_name"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Name"
+                android:text="Email"
                 android:textSize="16sp"
                 android:textColor="@color/text_color"/>
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_arrow_right"
-                android:contentDescription="Navigate to Name"/>
+            <TextView
+                android:id="@+id/user_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="user@gmail.com"
+                android:textSize="14sp"
+                android:textColor="@color/subtext_color"
+                android:layout_marginBottom="8dp"/>
         </LinearLayout>
 
-        <!-- Item: Email -->
         <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="First name"
+                android:textSize="16sp"
+                android:textColor="@color/text_color"/>
+
+            <TextView
+                android:id="@+id/user_firstname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="User first name"
+                android:textSize="14sp"
+                android:textColor="@color/subtext_color"
+                android:layout_marginBottom="8dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Last name"
+                android:textSize="16sp"
+                android:textColor="@color/text_color"/>
+
+            <TextView
+                android:id="@+id/user_last_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="User last name"
+                android:textSize="14sp"
+                android:textColor="@color/subtext_color"
+                android:layout_marginBottom="8dp"/>
+        </LinearLayout>
+        
+        <LinearLayout
+            android:id="@+id/edit_profile"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:orientation="horizontal"
@@ -80,11 +147,10 @@
             android:gravity="center_vertical">
 
             <TextView
-                android:id="@+id/account_email"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Email"
+                android:text="Edit profile"
                 android:textSize="16sp"
                 android:textColor="@color/text_color"/>
 
@@ -97,6 +163,7 @@
 
         <!-- Item: Language -->
         <LinearLayout
+            android:id="@+id/my_playlist"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:orientation="horizontal"
@@ -107,7 +174,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Language"
+                android:text="My playlist"
                 android:textSize="16sp"
                 android:textColor="@color/text_color"/>
 
@@ -120,6 +187,7 @@
 
         <!-- Item: About -->
         <LinearLayout
+            android:id="@+id/change_password"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:orientation="horizontal"
@@ -130,7 +198,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="About"
+                android:text="Change password"
                 android:textSize="16sp"
                 android:textColor="@color/text_color"/>
 
@@ -143,6 +211,7 @@
 
         <!-- Item: Privacy -->
         <LinearLayout
+            android:id="@+id/logout"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:orientation="horizontal"
@@ -153,7 +222,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Privacy"
+                android:text="Log out"
                 android:textSize="16sp"
                 android:textColor="@color/text_color"/>
 
@@ -162,52 +231,6 @@
                 android:layout_height="24dp"
                 android:src="@drawable/ic_arrow_right"
                 android:contentDescription="Navigate to Privacy"/>
-        </LinearLayout>
-
-        <!-- Item: Storage -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:orientation="horizontal"
-            android:paddingVertical="8dp"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Storage"
-                android:textSize="16sp"
-                android:textColor="@color/text_color"/>
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_arrow_right"
-                android:contentDescription="Navigate to Storage"/>
-        </LinearLayout>
-
-        <!-- Item: Audio Quality -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:orientation="horizontal"
-            android:paddingVertical="8dp"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Audio Quality"
-                android:textSize="16sp"
-                android:textColor="@color/text_color"/>
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_arrow_right"
-                android:contentDescription="Navigate to Audio Quality"/>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

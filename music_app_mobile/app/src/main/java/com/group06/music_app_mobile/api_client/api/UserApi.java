@@ -9,6 +9,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.PATCH;
+import retrofit2.http.POST;
 import retrofit2.http.Part;
 
 public interface UserApi {
@@ -23,4 +24,7 @@ public interface UserApi {
 
     @PATCH("user/change-avatar")
     Call<User> changeAvatar(@Part("avatar") String avatar);
+
+    @POST("user/logout")
+    Call<Void> logout();
 }

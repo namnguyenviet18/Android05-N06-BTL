@@ -36,6 +36,9 @@ public interface SongApi {
     @DELETE("song/{id}")
     Call<String> deleteSong(@Path("id") long songId);
 
+    @GET("song/liked")
+    Call<List<Song>> getLikedSong();
+
     @GET("song/{id}")
     Call<Song> getSongById(@Path("id") long songId);
 

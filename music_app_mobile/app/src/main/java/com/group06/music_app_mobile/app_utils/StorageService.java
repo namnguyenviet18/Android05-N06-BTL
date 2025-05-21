@@ -3,7 +3,13 @@ package com.group06.music_app_mobile.app_utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.group06.music_app_mobile.api_client.responses.AuthenticationResponse;
+import com.group06.music_app_mobile.models.User;
+
 import org.jetbrains.annotations.NotNull;
+
+import lombok.Getter;
+import lombok.Setter;
 
 public class StorageService {
 
@@ -13,6 +19,10 @@ public class StorageService {
 
     private static SharedPreferences preferences;
     private static SharedPreferences.Editor editor;
+
+    @Getter
+    @Setter
+    private User user;
 
     private StorageService() {}
 
@@ -29,6 +39,11 @@ public class StorageService {
             }
         }
         return instance;
+    }
+
+    public void setTokens(AuthenticationResponse authResponse) {
+        setAccessToken(authResponse.getAccessToken());
+        setRefreshToken(authResponse.getRefreshToken());
     }
 
     public void setAccessToken(@NotNull String accessToken) {

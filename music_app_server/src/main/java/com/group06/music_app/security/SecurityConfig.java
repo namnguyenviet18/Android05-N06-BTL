@@ -1,5 +1,6 @@
 package com.group06.music_app.security;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -61,7 +62,10 @@ public class SecurityConfig {
                         .clearAuthentication(true)
                         .addLogoutHandler(logoutHandler)
                         .logoutSuccessHandler(
-                                ((request, response, authentication) -> SecurityContextHolder.clearContext())
+                                ((request, response, authentication) -> {
+                                    SecurityContextHolder.clearContext();
+                                    response.setStatus(HttpServletResponse.SC_OK);
+                                })
                         ));
 
         return http.build();

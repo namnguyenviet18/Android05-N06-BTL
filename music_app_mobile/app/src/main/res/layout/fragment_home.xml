@@ -8,14 +8,16 @@
     android:padding="16dp">
 
     <!-- Header: Greeting -->
+
     <TextView
+        android:id="@+id/hello_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingBottom="4dp"
         android:text="Hello Vini,"
         android:textColor="@color/text_white"
         android:textSize="16sp"
-        android:textStyle="bold"
-        android:paddingBottom="4dp"/>
+        android:textStyle="bold" />
 
     <TextView
         android:layout_width="match_parent"

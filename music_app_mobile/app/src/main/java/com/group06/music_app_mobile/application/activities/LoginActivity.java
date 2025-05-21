@@ -15,6 +15,7 @@ import com.group06.music_app_mobile.api_client.ApiClient;
 import com.group06.music_app_mobile.api_client.api.AuthApi;
 import com.group06.music_app_mobile.api_client.requests.AuthenticationRequest;
 import com.group06.music_app_mobile.api_client.responses.AuthenticationResponse;
+import com.group06.music_app_mobile.app_utils.GoogleAuthService;
 import com.group06.music_app_mobile.app_utils.StorageService;
 import com.group06.music_app_mobile.databinding.ActivityLoginBinding;
 
@@ -25,6 +26,8 @@ import retrofit2.Response;
 public class LoginActivity extends AppCompatActivity {
 
     private ActivityLoginBinding binding;
+
+    private GoogleAuthService googleAuthService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,14 +66,20 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new Intent(this, ForgotPasswordActivity.class);
             startActivity(intent);
         });
+        googleAuthService = GoogleAuthService.getInstance(this, true);
+        signInWithGoogle();
     }
 
-    @Override
-    public void onBackPressed() {
-        // Navigate to SignupActivity instead of going back to WelcomeActivity
-        Intent intent = new Intent(this, SignupActivity.class);
-        startActivity(intent);
-        finish();
+//    @Override
+//    public void onBackPressed() {
+//        // Navigate to SignupActivity instead of going back to WelcomeActivity
+//        Intent intent = new Intent(this, SignupActivity.class);
+//        startActivity(intent);
+//        finish();
+//    }
+
+    private void signInWithGoogle() {
+        binding.buttonLoginGoogle.setOnClickListener(view -> googleAuthService.signIn());
     }
 
     private void login(String email, String password) {

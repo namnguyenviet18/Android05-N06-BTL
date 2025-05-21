@@ -11,6 +11,7 @@ import com.group06.music_app_mobile.api_client.ApiClient;
 import com.group06.music_app_mobile.api_client.api.AuthApi;
 import com.group06.music_app_mobile.api_client.requests.AuthenticationRequest;
 import com.group06.music_app_mobile.api_client.requests.RegisterRequest;
+import com.group06.music_app_mobile.app_utils.GoogleAuthService;
 import com.group06.music_app_mobile.databinding.ActivitySignupBinding;
 import com.group06.music_app_mobile.models.OTP;
 
@@ -23,12 +24,17 @@ import retrofit2.Response;
 public class SignupActivity extends AppCompatActivity {
 
     private ActivitySignupBinding binding;
+    private GoogleAuthService googleAuthService;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivitySignupBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        googleAuthService = GoogleAuthService.getInstance(this, true);
+        signInWithGoogle();
 
         // Set click listener for the "Sign in" text
         binding.signInLinkTextView.setOnClickListener(view -> {
@@ -65,6 +71,10 @@ public class SignupActivity extends AppCompatActivity {
             // Gọi hàm signup
             signup(firstname, lastname, email, password);
         });
+    }
+
+    private void signInWithGoogle() {
+        binding.buttonLoginGoogle.setOnClickListener(view -> googleAuthService.signIn());
     }
 
     private void signup(String firstname, String lastname, String email, String password) {

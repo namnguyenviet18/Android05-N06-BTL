@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.group06.music_app_mobile.R;
 import com.group06.music_app_mobile.app_utils.AppUtils;
+import com.group06.music_app_mobile.app_utils.Constants;
 import com.group06.music_app_mobile.app_utils.ReplyCommentHelper;
 import com.group06.music_app_mobile.application.events.OnExpandChildCommentListener;
 import com.group06.music_app_mobile.application.events.OnLikeClickListener;
@@ -161,8 +162,10 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         }
     }
     private void displayCommentInfo(CommentViewHolder holder, Comment comment) {
+        String avatarUrl = comment.getUser().getAvatarUrl() != null ? comment.getUser().getAvatarUrl() : "";
         Glide.with(context)
-                .load(comment.getUser().getAvatarUrl())
+                .load(avatarUrl.startsWith("https") ? comment.getUser().getAvatarUrl():
+                        (Constants.FILE_LOAD_ENDPOINT + avatarUrl))
                 .centerCrop()
                 .placeholder(R.drawable.ic_user_fill)
                 .error(R.drawable.ic_user_fill)
