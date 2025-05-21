@@ -49,6 +49,7 @@ public class HomeFragment extends Fragment implements OnSongItemClickListener, O
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         recyclerRecent = view.findViewById(R.id.recyclerRecent);
         View seeAllTextView = view.findViewById(R.id.seeAllTextView);
+        View seeAllTextView2 = view.findViewById(R.id.seeAllTextView2);
 
         // Khởi tạo Adapter với danh sách rỗng
         songList = new ArrayList<>();
@@ -62,6 +63,21 @@ public class HomeFragment extends Fragment implements OnSongItemClickListener, O
         fetchSongs();
 
         seeAllTextView.setOnClickListener(v -> {
+            // Replace vào fragment_container thay vì nav_home
+            requireActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new AllSongsFragment())
+                    .addToBackStack(null)
+                    .commit();
+
+            // Ẩn ViewPager2 và BottomNavigationView
+            requireActivity().findViewById(R.id.viewPager).setVisibility(View.GONE);
+            requireActivity().findViewById(R.id.bottomNavigationView).setVisibility(View.GONE);
+
+            // Hiện FrameLayout chứa AllSongsFragment
+            requireActivity().findViewById(R.id.fragment_container).setVisibility(View.VISIBLE);
+        });
+
+        seeAllTextView2.setOnClickListener(v -> {
             // Replace vào fragment_container thay vì nav_home
             requireActivity().getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, new AllSongsFragment())
