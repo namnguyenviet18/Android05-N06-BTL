@@ -49,6 +49,14 @@
         <activity
             android:name=".application.activities.MainActivity"
             android:exported="true" />
+        <activity
+            android:name=".application.activities.UpdateProfileActivity"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
