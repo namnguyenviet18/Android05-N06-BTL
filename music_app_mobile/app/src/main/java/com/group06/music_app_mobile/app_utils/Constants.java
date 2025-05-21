@@ -14,6 +14,7 @@ public class Constants {
 
     public static final String FILE_LOAD_ENDPOINT = SERVER_DOMAIN + "song/file/load?fullUrl=";
     public static final String GOOGLE_CLIENT_ID = "1078270987220-iq6dluklb03qlrsc4rgmfp6hireno8cn.apps.googleusercontent.com";
+//    public static final String GOOGLE_CLIENT_ID = "235758457518-ks3d2skub7lka467vvdmiaot65a4eebj.apps.googleusercontent.com";
     private Constants() {}
 
 

@@ -13,4 +13,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class GoogleAuthRequest {
     private String tokenId;
+
+//    public GoogleAuthRequest(String tokenId){
+//        this.tokenId = tokenId;
+//    }
 }
