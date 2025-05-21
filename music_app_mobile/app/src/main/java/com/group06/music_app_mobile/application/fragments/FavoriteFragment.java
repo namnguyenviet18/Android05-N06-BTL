@@ -58,11 +58,11 @@ public class FavoriteFragment extends Fragment {
 
         // Tạo danh sách bài hát giả lập sử dụng model Song
         List<Song> songList = new ArrayList<>();
-        songList.add(new Song("Dailamo Dailamo", "Sangeetha Rajeshwaran", "Vijay Antony", "", "", "", "", "", 0, 0, null, null, true, false, false, null, 0));
-        songList.add(new Song("Saara Kaattrae", "S. P. Balasubrahmanyam", "", "", "", "", "", "", 0, 0, null, null, true, false, false, null, 0));
-        songList.add(new Song("Marundhaani", "Nakash Aziz", "Anthony Daasan", "", "", "", "", "", 0, 0, null, null, true, false, false, null, 0));
-        songList.add(new Song("Oru Devadhai", "Roopkumar Rathod", "", "", "", "", "", "", 0, 0, null, null, true, false, false, null, 0));
-        songList.add(new Song("Marundhaani", "Nakash Aziz", "Anthony Daasan", "", "", "", "", "", 0, 0, null, null, true, false, false, null, 0));
+//        songList.add(new Song("Dailamo Dailamo", "Sangeetha Rajeshwaran", "Vijay Antony", "", "", "", "", "", 0, 0, null, null, true, false, false, null, 0));
+//        songList.add(new Song("Saara Kaattrae", "S. P. Balasubrahmanyam", "", "", "", "", "", "", 0, 0, null, null, true, false, false, null, 0));
+//        songList.add(new Song("Marundhaani", "Nakash Aziz", "Anthony Daasan", "", "", "", "", "", 0, 0, null, null, true, false, false, null, 0));
+//        songList.add(new Song("Oru Devadhai", "Roopkumar Rathod", "", "", "", "", "", "", 0, 0, null, null, true, false, false, null, 0));
+//        songList.add(new Song("Marundhaani", "Nakash Aziz", "Anthony Daasan", "", "", "", "", "", 0, 0, null, null, true, false, false, null, 0));
 
         // Khởi tạo adapter và gán cho RecyclerView
         SongAdapter songAdapter = new SongAdapter(getContext(), songList);

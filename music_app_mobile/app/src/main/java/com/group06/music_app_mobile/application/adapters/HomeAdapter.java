@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +22,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.group06.music_app_mobile.R;
 import com.group06.music_app_mobile.api_client.responses.SongResponse;
+import com.group06.music_app_mobile.application.events.OnLongItemClickListener;
+import com.group06.music_app_mobile.application.events.OnSongItemClickListener;
+import com.group06.music_app_mobile.models.Song;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,7 +33,7 @@ import java.util.Locale;
 
 public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.SongViewHolder> {
 
-    private List<SongResponse> songs;
+    private List<Song> songs;
 
     // MediaPlayer và Handler quản lý việc play nhạc và cập nhật UI thời gian
     private MediaPlayer mediaPlayer;
@@ -41,14 +45,32 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.SongViewHolder
     // Biến để lưu id bài hát đang phát, -1 nếu không có bài nào đang phát
     private long playingSongId = -1;
 
-    public HomeAdapter(List<SongResponse> songs) {
+    private OnSongItemClickListener onSongItemClickListener;
+
+    private OnLongItemClickListener onLongItemClickListener;
+
+    public HomeAdapter(List<Song> songs, OnSongItemClickListener onSongItemClickListener) {
         this.songs = new ArrayList<>(songs);
         mediaPlayer = new MediaPlayer();
+        this.onSongItemClickListener = onSongItemClickListener;
+    }
+
+    public HomeAdapter(
+            List<Song> songs,
+            OnSongItemClickListener onSongItemClickListener,
+            OnLongItemClickListener onLongItemClickListener
+    ) {
+        this.songs = new ArrayList<>(songs);
+        mediaPlayer = new MediaPlayer();
+        this.onSongItemClickListener = onSongItemClickListener;
+        this.onLongItemClickListener = onLongItemClickListener;
     }
 
     public static class SongViewHolder extends RecyclerView.ViewHolder {
         ImageView imgCover, imgPlay;
         TextView txtTitle, txtSubtitle, txtDuration;
+
+        LinearLayout songItem;
 
         public SongViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -57,6 +79,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.SongViewHolder
             txtTitle = itemView.findViewById(R.id.txtTitle);
             txtSubtitle = itemView.findViewById(R.id.txtSubtitle);
             txtDuration = itemView.findViewById(R.id.txtDuration);
+            songItem = itemView.findViewById(R.id.song_item);
         }
     }
 
@@ -75,10 +98,11 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.SongViewHolder
         return String.format(Locale.getDefault(), "%d:%02d", minutes, seconds);
     }
 
+
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull SongViewHolder holder, int position) {
-        SongResponse song = songs.get(position);
+        Song song = songs.get(position);
 
         holder.txtTitle.setText(song.getName());
         holder.txtSubtitle.setText(song.getAuthorName() +
@@ -201,6 +225,20 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.SongViewHolder
                 }
             }
         });
+
+        holder.songItem.setOnClickListener(view -> {
+            if(mediaPlayer.isPlaying()) {
+                mediaPlayer.pause();
+            }
+            onSongItemClickListener.toPlayActivity(position);
+        });
+
+        holder.songItem.setOnLongClickListener(view -> {
+            if(onLongItemClickListener != null) {
+                onLongItemClickListener.onLongItemClick(song, view);
+            }
+            return true;
+        });
     }
     // Hàm định dạng thời lượng ms -> chuỗi mm:ss
     private String formatDuration(int durationMs) {
@@ -216,7 +254,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.SongViewHolder
         return songs.size();
     }
 
-    public void updateSongs(List<SongResponse> newSongs) {
+    public void updateSongs(List<Song> newSongs) {
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new SongDiffCallback(songs, newSongs));
         songs.clear();
         songs.addAll(newSongs);
@@ -224,10 +262,10 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.SongViewHolder
     }
 
     private static class SongDiffCallback extends DiffUtil.Callback {
-        private final List<SongResponse> oldList;
-        private final List<SongResponse> newList;
+        private final List<Song> oldList;
+        private final List<Song> newList;
 
-        SongDiffCallback(List<SongResponse> oldList, List<SongResponse> newList) {
+        SongDiffCallback(List<Song> oldList, List<Song> newList) {
             this.oldList = oldList;
             this.newList = newList;
         }
@@ -249,8 +287,8 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.SongViewHolder
 
         @Override
         public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-            SongResponse oldSong = oldList.get(oldItemPosition);
-            SongResponse newSong = newList.get(newItemPosition);
+            Song oldSong = oldList.get(oldItemPosition);
+            Song newSong = newList.get(newItemPosition);
             return oldSong.getName().equals(newSong.getName()) &&
                     oldSong.getAuthorName().equals(newSong.getAuthorName()) &&
                     (oldSong.getSingerName() == null ? newSong.getSingerName() == null : oldSong.getSingerName().equals(newSong.getSingerName()));

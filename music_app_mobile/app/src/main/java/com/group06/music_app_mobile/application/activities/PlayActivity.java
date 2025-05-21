@@ -6,6 +6,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
 
@@ -16,6 +17,8 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.group06.music_app_mobile.R;
 import com.group06.music_app_mobile.api_client.ApiClient;
 import com.group06.music_app_mobile.api_client.api.SongApi;
+import com.group06.music_app_mobile.app_utils.Constants;
+import com.group06.music_app_mobile.app_utils.enums.DataTransferBetweenScreens;
 import com.group06.music_app_mobile.app_utils.enums.PlayMode;
 import com.group06.music_app_mobile.application.adapters.PlayPagerAdapter;
 import com.group06.music_app_mobile.application.fragments.CommentBottomSheetFragment;
@@ -24,6 +27,7 @@ import com.group06.music_app_mobile.databinding.ActivityPlayBinding;
 import com.group06.music_app_mobile.models.Song;
 
 import java.io.IOException;
+import java.util.List;
 
 import lombok.Getter;
 import retrofit2.Call;
@@ -35,6 +39,10 @@ public class PlayActivity extends AppCompatActivity {
     private ActivityPlayBinding binding;
     @Getter
     private Song song;
+
+    private List<Song> songs;
+
+    private int currentSongPosition;
     private boolean isPrepared = false;
     @Getter
     private MediaPlayer mediaPlayer;
@@ -56,39 +64,32 @@ public class PlayActivity extends AppCompatActivity {
         binding = ActivityPlayBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        song = Song.builder()
-                .id(2L)
-                .audioUrl("https://res.cloudinary.com/dee2s8sgk/video/upload/v1745932928/audios/Em_C%E1%BB%A7a_Ng%C3%A0y_H%C3%B4m_Qua_Lyrics_Video_t3xjgi.mp3")
-                .likeCount(15)
-                .authorName("Sơn Tùng MTP")
-                .singerName("Sơn Tùng MTP")
-                .coverImageUrl("https://img.tripi.vn/cdn-cgi/image/width=700,height=700/https://gcs.tripi.vn/public-tripi/tripi-feed/img/482786dLt/anh-mo-ta.png")
-                .lyrics("/dee2s8sgk/raw/upload/v1745935865/audios/lyric_em_cua_ngay_home_qua_m0vjvx.json")
-                .commentCount(20)
-                .name("Em của ngày hôm qua")
-                .isPublic(true)
-                .isDeleted(false)
-                .isLiked(false)
-                .fileName("em_cua_ngay_hom_qua")
-                .fileExtension("mp3")
-                .viewCount(1500)
-                .build();
-
-
         init();
 
-        initMediaPlayer();
         playPagerAdapter = new PlayPagerAdapter(this);
         binding.playViewpager.setAdapter(playPagerAdapter);
+        if (songs.isEmpty() || song == null) {
+            return;
+        }
         setUpViewPagerChange();
         setUpSeekbarOnChange();
         setUpPlayButton();
         setUpRepeatButton();
         setUpCommentButton();
         setupButtonLike();
+        setUpPreviousButton();
+        setUpNextButton();
     }
 
+    @SuppressWarnings("unchecked")
     private void init() {
+        songs = (List<Song>) getIntent().getSerializableExtra(DataTransferBetweenScreens.SONG_LIST.name());
+        currentSongPosition = getIntent().getIntExtra(DataTransferBetweenScreens.CURRENT_SONG_POSITION.name(), 0);
+        Log.d("SIZE - INDEX", songs.size() + " - " + currentSongPosition);
+        song = songs.get(currentSongPosition);
+        if (songs.isEmpty() || song == null) {
+            return;
+        }
         displayInfo();
         songApi = ApiClient.getClient(this).create(SongApi.class);
         setNoRepeat();
@@ -105,6 +106,7 @@ public class PlayActivity extends AppCompatActivity {
         binding.dot0.setLayoutParams(selectedParams);
         binding.dot0.setLayoutParams(unselectedParams);
         whenDot0Selected();
+        initMediaPlayer();
     }
 
     public void displayInfo() {
@@ -128,10 +130,12 @@ public class PlayActivity extends AppCompatActivity {
     }
 
     private void initMediaPlayer() {
+        releaseMediaPlayer();
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
         try {
-            mediaPlayer.setDataSource(song.getAudioUrl());
+            mediaPlayer.setDataSource(Constants.FILE_LOAD_ENDPOINT + song.getAudioUrl());
             mediaPlayer.prepareAsync();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -147,7 +151,13 @@ public class PlayActivity extends AppCompatActivity {
             updateSeekBar();
         });
 
-        mediaPlayer.setOnCompletionListener(mp -> setPlayIcon());
+        mediaPlayer.setOnCompletionListener(mp -> {
+            switch (playMode) {
+                case NO_REPEAT -> setPlayIcon();
+                case REPEAT_ONE -> initMediaPlayer();
+                default -> next();
+            }
+        });
 
     }
 
@@ -294,6 +304,52 @@ public class PlayActivity extends AppCompatActivity {
                 case REPEAT_ONE -> setNoRepeat();
             }
         });
+    }
+
+    private void setUpNextButton() {
+        binding.nextButton.setOnClickListener(view -> {
+            next();
+        });
+    }
+
+    private void setUpPreviousButton() {
+        binding.previousButton.setOnClickListener(view -> {
+            previous();
+        });
+    }
+    private void next() {
+        if (currentSongPosition == songs.size() - 1) {
+            currentSongPosition = 0;
+        } else {
+            currentSongPosition++;
+        }
+        song = songs.get(currentSongPosition);
+        displayInfo();
+        initMediaPlayer();
+
+    }
+
+    private void previous() {
+        if (currentSongPosition == 0) {
+            currentSongPosition = songs.size() - 1;
+        } else {
+            currentSongPosition--;
+        }
+        song = songs.get(currentSongPosition);
+        displayInfo();
+        initMediaPlayer();
+    }
+
+    private void releaseMediaPlayer() {
+        if (mediaPlayer != null) {
+            if (mediaPlayer.isPlaying()) {
+                mediaPlayer.stop();
+            }
+            mediaPlayer.reset();
+            mediaPlayer.release();
+            mediaPlayer = null;
+            isPrepared = false;
+        }
     }
 
     private void setNoRepeat() {

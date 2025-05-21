@@ -195,9 +195,11 @@ public class SongController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<SongResponse>> getAllSongs() {
+    public ResponseEntity<List<SongResponse>> getAllSongs(
+            Authentication currentUser
+    ) {
         try {
-            List<SongResponse> songs = songService.getAllSongs();
+            List<SongResponse> songs = songService.getAllSongs(currentUser);
             if (songs.isEmpty()) {
                 return ResponseEntity.noContent().build();
             }
@@ -218,12 +220,22 @@ public class SongController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SongResponse> getSongDetails(@PathVariable("id") Long songId) {
+    public ResponseEntity<SongResponse> getSongDetails(
+            @PathVariable("id") Long songId,
+            Authentication currentUser
+    ) {
         try {
-            SongResponse song = songService.getSongById(songId);
+            SongResponse song = songService.getSongById(songId, currentUser);
             return ResponseEntity.ok(song);
         } catch (Exception e) {
             return ResponseEntity.status(404).body(null);
         }
+    }
+
+    @GetMapping("/liked")
+    public ResponseEntity<List<SongResponse>> getLikedSong(
+            Authentication currentUser
+    ) {
+        return ResponseEntity.ok(songService.getLikedSong(currentUser));
     }
 }

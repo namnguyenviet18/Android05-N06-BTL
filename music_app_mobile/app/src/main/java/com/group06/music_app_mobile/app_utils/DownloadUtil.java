@@ -42,15 +42,15 @@ public class DownloadUtil {
             }
 
             // Gọi API để lấy chi tiết bài hát
-            Call<SongResponse> call = songApi.getSongById(songId);
-            Response<SongResponse> response = call.execute();
+            Call<Song> call = songApi.getSongById(songId);
+            Response<Song> response = call.execute();
 
             if (!response.isSuccessful() || response.body() == null) {
                 Log.e(TAG, "Không thể lấy chi tiết bài hát với ID: " + songId + " - Mã lỗi: " + response.code());
                 return false;
             }
 
-            SongResponse song = response.body();
+            Song song = response.body();
 
             // Kiểm tra các URL
             String audioUrl = song.getAudioUrl();

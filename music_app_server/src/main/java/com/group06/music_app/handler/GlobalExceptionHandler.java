@@ -116,6 +116,18 @@ public class GlobalExceptionHandler {
                 );
     }
 
+    @ExceptionHandler(FileException.class)
+    public ResponseEntity<ExceptionResponse> handlerException(
+            FileException exp
+    ) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(
+                        ExceptionResponse.builder()
+                                .message(exp.getMessage())
+                                .build()
+                );
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ExceptionResponse> handleException(
             MethodArgumentNotValidException exp

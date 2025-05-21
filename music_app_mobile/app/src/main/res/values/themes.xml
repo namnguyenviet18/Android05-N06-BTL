@@ -5,6 +5,7 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
         <item name="android:colorBackground">@color/app_background</item>
         <item name="android:windowBackground">@color/app_background</item>
+        <item name="popupMenuStyle">@style/PopupMenuStyle</item>
     </style>
 
     <style name="Theme.Music_app_mobile" parent="Base.Theme.Music_app_mobile" />
@@ -13,5 +14,8 @@
     <style name="Theme.Music_app_mobile.Splash" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_background</item>
         <item name="android:statusBarColor">#000000</item>
+        <item name="popupMenuStyle">@style/PopupMenuStyle</item>
     </style>
+
+
 </resources>

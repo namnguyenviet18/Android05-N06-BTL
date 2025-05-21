@@ -95,7 +95,6 @@ public class CommentBottomSheetFragment
         if(song == null) {
             return;
         }
-        Log.d("SONG ID: ", song.getId().toString());
         Call<List<Comment>> call = commentApi.getCommentsBySong(song.getId());
         call.enqueue(new Callback<>() {
             @SuppressLint("NotifyDataSetChanged")
@@ -103,7 +102,6 @@ public class CommentBottomSheetFragment
             public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
                 comments.clear();
                 comments.addAll(response.body() != null ? response.body() : new ArrayList<>());
-                Log.d("COMMENTS SIZE: ", response.body().size() + "");
                 commentAdapter.notifyDataSetChanged();
             }
 

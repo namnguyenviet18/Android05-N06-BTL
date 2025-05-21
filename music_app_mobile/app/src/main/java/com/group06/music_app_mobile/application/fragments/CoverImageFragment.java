@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.group06.music_app_mobile.R;
+import com.group06.music_app_mobile.app_utils.Constants;
 import com.group06.music_app_mobile.application.activities.PlayActivity;
 import com.group06.music_app_mobile.databinding.FragmentCoverImageBinding;
 import com.group06.music_app_mobile.models.Song;
@@ -34,7 +35,7 @@ public class CoverImageFragment extends Fragment {
         }
         Song song = playActivity.getSong();
         Glide.with(this)
-                .load(song.getCoverImageUrl())
+                .load(Constants.FILE_LOAD_ENDPOINT + song.getCoverImageUrl())
                 .centerCrop()
                 .into(binding.coverImageView);
     }

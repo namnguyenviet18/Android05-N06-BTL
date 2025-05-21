@@ -1,5 +1,6 @@
 package com.group06.music_app_mobile.models;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,7 +16,7 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Setter
 @SuperBuilder
-public class Comment extends BaseEntity {
+public class Comment extends BaseEntity implements Serializable {
     private User user;
     private String content;
     private List<Comment> descendants;

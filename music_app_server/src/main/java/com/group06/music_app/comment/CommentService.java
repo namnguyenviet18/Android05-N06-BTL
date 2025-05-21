@@ -89,7 +89,7 @@ public class CommentService {
 
     public List<CommentResponse> getCommentsBySong(Long songId, Authentication currentUser) {
         User user = (User) currentUser.getPrincipal();
-        List<Comment> topLevelComments = repository.findByRootIsNullAndSongId(2L);
+        List<Comment> topLevelComments = repository.findByRootIsNullAndSongId(songId);
 
         return topLevelComments
                 .stream()

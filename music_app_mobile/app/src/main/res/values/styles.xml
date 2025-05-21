@@ -52,4 +52,9 @@
         <item name="android:layout_marginRight">8dp</item>
         <item name="android:maxLength">1</item> <!-- Sẽ cần gán bằng InputFilter trong code -->
     </style>
+
+    <style name="PopupMenuStyle" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
 </resources>

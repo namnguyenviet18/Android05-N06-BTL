@@ -1,5 +1,7 @@
 package com.group06.music_app_mobile.api_client.api;
 import com.group06.music_app_mobile.api_client.responses.SongResponse;
+import com.group06.music_app_mobile.models.Song;
+
 import java.util.List;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
@@ -17,7 +19,7 @@ public interface SongApi {
 
     @Multipart
     @POST("song/add")
-    Call<SongResponse> addSong(
+    Call<Song> addSong(
             @Part("songName") String songName,
             @Part("authorName") String authorName,
             @Part("singerName") String singerName,
@@ -29,13 +31,13 @@ public interface SongApi {
     );
 
     @GET("song/list")
-    Call<List<SongResponse>> getAllSongs();
+    Call<List<Song>> getAllSongs();
 
     @DELETE("song/{id}")
     Call<String> deleteSong(@Path("id") long songId);
 
     @GET("song/{id}")
-    Call<SongResponse> getSongById(@Path("id") long songId);
+    Call<Song> getSongById(@Path("id") long songId);
 
     @Multipart
     @POST("song/file/upload")

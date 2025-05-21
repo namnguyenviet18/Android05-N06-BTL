@@ -18,6 +18,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 
 import com.group06.music_app_mobile.api_client.ApiClient;
 import com.group06.music_app_mobile.api_client.api.LoadFileApi;
+import com.group06.music_app_mobile.app_utils.Constants;
 import com.group06.music_app_mobile.application.activities.PlayActivity;
 import com.group06.music_app_mobile.application.adapters.LyricAdapter;
 import com.group06.music_app_mobile.databinding.FragmentLyricBinding;
@@ -126,9 +127,9 @@ public class LyricFragment extends Fragment {
         if(playActivity.getSong() == null) {
             return;
         }
-
-        LoadFileApi api = ApiClient.getClientCloudinary().create(LoadFileApi.class);
-        api.getLyric(playActivity.getSong().getLyrics())
+//        String audioUrl = "http://" + SERVER_HOST + ":" + SERVER_PORT + "/api/v1/song/file/load?fullUrl=" + audioPath;
+        LoadFileApi api = ApiClient.getClient(requireContext()).create(LoadFileApi.class);
+        api.getLyric(Constants.FILE_LOAD_ENDPOINT + playActivity.getSong().getLyrics())
                 .enqueue(new Callback<>() {
                     @SuppressLint("NotifyDataSetChanged")
                     @Override

@@ -1,5 +1,6 @@
 package com.group06.music_app_mobile.models;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
@@ -14,7 +15,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
-public class BaseEntity {
+public class BaseEntity implements Serializable {
     private Long id;
     private String createdDate;
     private String lastModifiedDate;

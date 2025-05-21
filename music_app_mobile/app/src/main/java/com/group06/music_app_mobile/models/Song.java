@@ -1,9 +1,9 @@
 package com.group06.music_app_mobile.models;
 
+import java.io.Serializable;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Setter
 @SuperBuilder
-public class Song extends BaseEntity {
+public class Song extends BaseEntity implements Serializable {
     private String name;
     private String authorName;
     private String singerName;
@@ -29,9 +29,10 @@ public class Song extends BaseEntity {
     private List<Comment> comments;
     private boolean isPublic;
     private boolean isDeleted;
-    private boolean isLiked;
+    private boolean liked;
     private User user;
     private long viewCount;
+    private long duration;
 
     public String getName() {
         return name;
@@ -90,7 +91,7 @@ public class Song extends BaseEntity {
     }
 
     public boolean isLiked() {
-        return isLiked;
+        return liked;
     }
 
     public User getUser() {

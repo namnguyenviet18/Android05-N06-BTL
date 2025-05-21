@@ -3,6 +3,8 @@ package com.group06.music_app_mobile.models;
 import com.group06.music_app_mobile.models.enums.LoginMethod;
 import com.group06.music_app_mobile.models.enums.Role;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,7 +16,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class User {
+public class User implements Serializable {
     private Long id;
     private String firstName;
     private String lastName;

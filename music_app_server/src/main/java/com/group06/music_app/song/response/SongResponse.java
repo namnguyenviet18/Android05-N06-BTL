@@ -2,12 +2,18 @@ package com.group06.music_app.song.response;
 import com.group06.music_app.comment.Comment;
 import com.group06.music_app.comment.responses.CommentResponse;
 import com.group06.music_app.song.SongLike;
+import com.group06.music_app.user.UserResponse;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class SongResponse {
     private Long id;
@@ -19,14 +25,20 @@ public class SongResponse {
     private String lyrics;
     private String fileName;
     private String fileExtension;
-    private Long duration;
+    private long likeCount;
+    private long commentCount;
+    private long duration;
+    private List<SongLike> likes;
+    private List<CommentResponse> comments;
     private boolean isPublic;
     private boolean isDeleted;
-
-    private int likeCount;
-    private int commentCount;
-    private List<SongLike> songLikes;
-    private List<Comment> comments;
+    private boolean liked;
+    private UserResponse user;
+    private long viewCount;
+    private LocalDateTime createdDate;
+    private LocalDateTime lastModifiedDate;
+    private Long createdBy;
+    private Long lastModifiedBy;
 
 
     public boolean isPublic() {

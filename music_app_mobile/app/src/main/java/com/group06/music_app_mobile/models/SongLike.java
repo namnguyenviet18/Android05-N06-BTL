@@ -1,5 +1,7 @@
 package com.group06.music_app_mobile.models;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,6 +14,6 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Setter
 @SuperBuilder
-public class SongLike extends BaseEntity {
+public class SongLike extends BaseEntity  implements Serializable {
     private User user;
 }

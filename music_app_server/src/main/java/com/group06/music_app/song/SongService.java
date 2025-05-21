@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,8 +29,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SongService {
 
-    @Autowired
     private final SongRepository songRepository;
+    private final SongMapper mapper;
+    private final SongLikeRepository songLikeRepository;
 
     public Boolean handleClickLikeSong(Long songId, Authentication currentUser) {
         User user = (User) currentUser.getPrincipal();
@@ -194,50 +194,24 @@ public class SongService {
     }
 
     @Transactional(readOnly = true)
-    public List<SongResponse> getAllSongs() {
-        return songRepository.findByIsDeletedFalse().stream().map(song -> SongResponse.builder()
-                .id(song.getId())
-                .name(song.getName())
-                .authorName(song.getAuthorName())
-                .singerName(song.getSingerName())
-                .audioUrl(song.getAudioUrl())
-                .coverImageUrl(song.getCoverImageUrl())
-                .lyrics(song.getLyrics())
-                .isPublic(song.isPublic())
-                .fileName(song.getFileName())
-                .fileExtension(song.getFileExtension())
-                .duration(song.getDuration())
-                .likeCount(song.getSongLikes() != null ? song.getSongLikes().size() : 0)
-                .commentCount(song.getComments() != null ? song.getComments().size() : 0)
-                .comments(Collections.emptyList())
-                .songLikes(Collections.emptyList())
-                .build()).collect(Collectors.toList());
+    public List<SongResponse> getAllSongs(Authentication currentUser) {
+        User user = (User) currentUser.getPrincipal();
+        return songRepository.findByIsDeletedFalse()
+                .stream()
+                .map(song -> mapper.toSongResponse(song, user))
+                .toList();
+
     }
 
     @Transactional(readOnly = true)
-    public SongResponse getSongById(Long songId) throws Exception {
+    public SongResponse getSongById(Long songId,Authentication currentUser) throws Exception {
+        User user = (User) currentUser.getPrincipal();
         Song song = songRepository.findById(songId)
                 .orElseThrow(() -> new Exception("Bài hát không tồn tại"));
         if (song.isDeleted()) {
             throw new Exception("Bài hát đã bị xóa");
         }
-        return SongResponse.builder()
-                .id(song.getId())
-                .name(song.getName())
-                .authorName(song.getAuthorName())
-                .singerName(song.getSingerName())
-                .audioUrl(song.getAudioUrl())
-                .coverImageUrl(song.getCoverImageUrl())
-                .lyrics(song.getLyrics())
-                .isPublic(song.isPublic())
-                .fileName(song.getFileName())
-                .fileExtension(song.getFileExtension())
-                .duration(song.getDuration())
-                .likeCount(song.getSongLikes() != null ? song.getSongLikes().size() : 0)
-                .commentCount(song.getComments() != null ? song.getComments().size() : 0)
-                .comments(Collections.emptyList())
-                .songLikes(Collections.emptyList())
-                .build();
+        return mapper.toSongResponse(song, user);
     }
 
     public SongResponse toDto(Song song) {
@@ -274,4 +248,14 @@ public class SongService {
         songRepository.save(song);
     }
 
+
+
+    public List<SongResponse> getLikedSong(Authentication currentUser) {
+        User user = (User) currentUser.getPrincipal();
+        List<SongLike> songLikes = songLikeRepository.findByUser(user);
+        return songLikes
+                .stream()
+                .map(likedSong -> mapper.toSongResponse(likedSong.getSong(), user))
+                .toList();
+    }
 }

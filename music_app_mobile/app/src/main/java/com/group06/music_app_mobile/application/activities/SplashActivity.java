@@ -33,7 +33,8 @@ public class SplashActivity extends AppCompatActivity {
 
         StorageService storageService = StorageService.getInstance(this);
         storageService.setRefreshToken("");
-        storageService.setRefreshToken("");
+        storageService.setAccessToken("");
+
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             Intent intent;
             if(storageService.isFirstLaunchApp()) {

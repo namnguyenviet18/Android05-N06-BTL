@@ -2,7 +2,9 @@ package com.group06.music_app.song.response;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 
+@Getter
 @Data
 @Builder
 public class FileStoreResult {
@@ -15,11 +17,4 @@ public class FileStoreResult {
         this.duration = duration;
     }
 
-    public String getFilePath() {
-        return filePath;
-    }
-
-    public Long getDuration() {
-        return duration;
-    }
 }
