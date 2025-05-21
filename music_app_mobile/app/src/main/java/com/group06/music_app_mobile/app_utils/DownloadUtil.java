@@ -3,6 +3,7 @@ package com.group06.music_app_mobile.app_utils;
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.group06.music_app_mobile.api_client.ApiClient;
 import com.group06.music_app_mobile.api_client.api.SongApi;
@@ -29,7 +30,7 @@ public class DownloadUtil {
     public boolean downloadSongById(Context context, long songId) {
         // Kiểm tra xem bài hát đã được tải chưa
         if (dbHelper.isSongDownloaded(songId)) {
-            Log.d(TAG, "Bài hát với ID " + songId + " đã được tải.");
+            Toast.makeText(context, "Bài hát này đã được tải!", Toast.LENGTH_SHORT).show();
             return true;
         }
 

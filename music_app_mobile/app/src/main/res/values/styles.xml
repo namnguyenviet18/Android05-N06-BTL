@@ -57,4 +57,9 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
+    <style name="CustomPopupMenu" parent="Widget.AppCompat.PopupMenu">
+        <item name="android:popupBackground">@color/app_background</item> <!-- Màu nền của menu -->
+        <item name="android:textColor">@color/text_white</item> <!-- Màu chữ của menu -->
+    </style>
+
 </resources>
