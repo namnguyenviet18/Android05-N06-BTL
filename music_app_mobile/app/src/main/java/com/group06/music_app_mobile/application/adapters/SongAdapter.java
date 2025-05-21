@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.group06.music_app_mobile.R;
 import com.group06.music_app_mobile.models.Song;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder> {
@@ -73,6 +74,11 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         return songList.size();
     }
 
+    // Cập nhật danh sách bài hát
+    public void updateSongs(List<Song> newSongs) {
+        this.songList = newSongs != null ? newSongs : new ArrayList<>();
+        notifyDataSetChanged();
+    }
     public static class SongViewHolder extends RecyclerView.ViewHolder {
         TextView tvSongTitle, tvArtist;
         CardView playButtonContainer;

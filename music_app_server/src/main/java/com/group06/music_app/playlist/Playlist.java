@@ -1,5 +1,6 @@
 package com.group06.music_app.playlist;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.group06.music_app.common.BaseEntity;
 import com.group06.music_app.user.User;
 import jakarta.persistence.*;
@@ -32,6 +33,7 @@ public class Playlist extends BaseEntity {
     @Column(nullable = false)
     private boolean isDeleted = false;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -41,4 +43,12 @@ public class Playlist extends BaseEntity {
 
     @OneToMany(mappedBy = "playlist")
     private List<SongPlaylist> songPlaylists;
+
+    public void setIsPublic(boolean aPublic) {
+        isPublic = aPublic;
+    }
+
+    public void setIsDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
 }
