@@ -181,6 +181,7 @@ public class AccountFragment extends Fragment {
                 progressDialog.dismiss();
                 Toast.makeText(requireContext(), "Please log in to continue", Toast.LENGTH_SHORT).show();
                 return;
+
             }
 
             // Gửi request lên server
