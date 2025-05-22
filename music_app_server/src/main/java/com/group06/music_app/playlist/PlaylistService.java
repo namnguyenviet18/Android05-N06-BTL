@@ -86,13 +86,19 @@ public class PlaylistService {
     }
 
     @Transactional(readOnly = true)
-    public List<Playlist> getUserPlaylists(Long userId) {
+    public List<PlaylistDetailResponse> getUserPlaylists(Long userId) {
         List<Playlist> playlists = playlistRepository.findByUserIdAndIsDeletedFalse(userId);
-        for (Playlist p : playlists) {
-            p.setPlaylistLikes(Collections.emptyList());
-            p.setSongPlaylists(Collections.emptyList());
-        }
-        return playlists;
+        return playlists.stream()
+                .map(playlist -> PlaylistDetailResponse.builder()
+                        .id(playlist.getId())
+                        .name(playlist.getName())
+                        .isPublic(playlist.isPublic())
+                        .coverImageUrl(playlist.getCoverImageUrl())
+                        .userId(playlist.getUser().getId())
+                        .songCount(playlist.getSongPlaylists().size())
+                        .likeCount(playlist.getPlaylistLikes().size())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
@@ -104,29 +110,13 @@ public class PlaylistService {
             throw new SecurityException("Unauthorized access to private playlist");
         }
 
-        // Chuyển list song trong playlist thành SongInPlaylistResponse
-        List<SongInPlaylistResponse> songResponses = playlist.getSongPlaylists().stream()
-                .map(sp -> {
-                    var song = sp.getSong();
-                    return SongInPlaylistResponse.builder()
-                            .id(song.getId())
-                            .name(song.getName())
-                            .authorName(song.getAuthorName())
-                            .singerName(song.getSingerName())
-                            .audioUrl(song.getAudioUrl())
-                            .coverImageUrl(song.getCoverImageUrl())
-                            .duration(song.getDuration())
-                            .build();
-                })
-                .collect(Collectors.toList());
-
         return PlaylistDetailResponse.builder()
                 .id(playlist.getId())
                 .name(playlist.getName())
                 .isPublic(playlist.isPublic())
                 .coverImageUrl(playlist.getCoverImageUrl())
                 .userId(playlist.getUser().getId())
-                .songs(songResponses) // <- dùng songResponses nhẹ
+                .songCount(playlist.getSongPlaylists().size())
                 .likeCount(playlist.getPlaylistLikes().size())
                 .build();
     }
@@ -228,5 +218,38 @@ public class PlaylistService {
             playlistLikeRepository.save(playlistLike);
             return true;
         }
+    }
+    @Transactional(readOnly = true)
+    public List<SongResponse> getSongsByPlaylistId(Long playlistId, User user) {
+        // Verify that the user is authorized to access the playlist
+        Playlist playlist = playlistRepository.findByIdAndIsDeletedFalse(playlistId)
+                .orElseThrow(() -> new EntityNotFoundException("Playlist not found"));
+
+        if (!playlist.getUser().getId().equals(user.getId()) && !playlist.isPublic()) {
+            throw new SecurityException("Unauthorized access to private playlist");
+        }
+
+        // Fetch all SongPlaylist entries for the given playlistId
+        List<SongPlaylist> songPlaylists = songPlaylistRepository.findByPlaylistIdOrderByPositionAsc(playlistId);
+
+        // Map SongPlaylist to SongResponse
+        List<SongResponse> songs = songPlaylists.stream()
+                .map(songPlaylist -> {
+                    Song song = songPlaylist.getSong();
+                    return SongResponse.builder()
+                            .id(song.getId())
+                            .name(song.getName()) // Assuming Song has getTitle() instead of getName()
+                            .authorName(song.getAuthorName() != null ? song.getAuthorName() : null) // Assuming Song has a related Author entity
+                            .singerName(song.getSingerName()!= null ? song.getSingerName() : null) // Assuming Song has getArtist() for singer name
+                            .audioUrl(song.getAudioUrl()) // Assuming getFilePath() maps to audioUrl
+                            .coverImageUrl(song.getCoverImageUrl()) // Assuming Song has getCoverImageUrl()
+                            .lyrics(song.getLyrics()) // Assuming Song has getLyrics()
+                            .isPublic(song.isPublic()) // Assuming Song has isPublic()
+                            .duration(song.getDuration()) // Assuming Song has getDuration()
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        return songs;
     }
 }

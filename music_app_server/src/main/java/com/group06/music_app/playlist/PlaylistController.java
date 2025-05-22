@@ -2,6 +2,7 @@ package com.group06.music_app.playlist;
 
 import com.group06.music_app.playlist.responses.PlaylistDetailResponse;
 import com.group06.music_app.playlist.responses.PlaylistResponse;
+import com.group06.music_app.song.response.SongResponse;
 import com.group06.music_app.user.User;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,15 +38,16 @@ public class PlaylistController {
     // Get all playlists
     @GetMapping("/")
     public ResponseEntity<List<Playlist>> getPlaylists() {
+        System.out.println(1);
         List<Playlist> playlists = playlistService.getPlaylists();
         return ResponseEntity.ok(playlists);
     }
 
     // Get all playlists for the current user
     @GetMapping("/user")
-    public ResponseEntity<List<Playlist>> getUserPlaylists(Authentication authentication) {
+    public ResponseEntity<List<PlaylistDetailResponse>> getUserPlaylists(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-        List<Playlist> playlists = playlistService.getUserPlaylists(user.getId());
+        List<PlaylistDetailResponse> playlists = playlistService.getUserPlaylists(user.getId());
         return ResponseEntity.ok(playlists);
     }
 
@@ -88,5 +90,11 @@ public class PlaylistController {
         boolean isLiked = playlistService.toggleLikePlaylist(playlistId, authentication);
         String message = isLiked ? "Playlist liked" : "Playlist unliked";
         return ResponseEntity.ok(message);
+    }
+    @GetMapping("/{playlistId}/songs/user")
+    public ResponseEntity<List<SongResponse>> getSongsByPlaylistId(@PathVariable Long playlistId, Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        List<SongResponse> songs = playlistService.getSongsByPlaylistId(playlistId, user);
+        return ResponseEntity.ok(songs);
     }
 }

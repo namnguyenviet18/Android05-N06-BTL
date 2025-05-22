@@ -1,21 +1,15 @@
-package com.group06.music_app.playlist.responses;
-
-import com.group06.music_app.song.response.SongResponse;
+package com.group06.music_app_mobile.api_client.responses;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
-@Data
+@Builder
 @Getter
 @Setter
-@Builder
-public class PlaylistDetailResponse {
+public class PlaylistResponse {
     private Long id;
     private String name;
-    private Boolean isPublic;
+    private boolean isPublic;
     private String coverImageUrl;
     private Long userId;
     private int songCount;
