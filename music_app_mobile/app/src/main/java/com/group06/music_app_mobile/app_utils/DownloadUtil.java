@@ -12,6 +12,8 @@ import com.group06.music_app_mobile.models.Song;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -26,7 +28,7 @@ public class DownloadUtil {
         this.dbHelper = new SQLiteHelper(context);
     }
 
-    // Phương thức mới: Tải bài hát dựa trên songId
+    // Phương thức: Tải bài hát dựa trên songId
     public boolean downloadSongById(Context context, long songId) {
         // Kiểm tra xem bài hát đã được tải chưa
         if (dbHelper.isSongDownloaded(songId)) {
@@ -42,6 +44,7 @@ public class DownloadUtil {
             public void onResponse(Call<Song> call, Response<Song> response) {
                 if (!response.isSuccessful() || response.body() == null) {
                     Log.e(TAG, "Không thể lấy chi tiết bài hát với ID: " + songId + " - Mã lỗi: " + response.code());
+                    Toast.makeText(context, "Không thể lấy chi tiết bài hát!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -54,6 +57,7 @@ public class DownloadUtil {
 
                 if (audioUrl == null || coverImageUrl == null || lyricsUrl == null) {
                     Log.e(TAG, "Một trong các URL bị null: audio=" + audioUrl + ", cover=" + coverImageUrl + ", lyrics=" + lyricsUrl);
+                    Toast.makeText(context, "Dữ liệu bài hát không đầy đủ!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -90,38 +94,47 @@ public class DownloadUtil {
                                         dbHelper.insertDownloadedSong(songId, song.getName(), song.getAuthorName(), song.getSingerName(),
                                                 localAudioPath, localCoverImagePath, localLyricsPath);
                                         Log.d(TAG, "Đã tải và lưu bài hát vào cơ sở dữ liệu: " + song.getName());
+                                        Toast.makeText(context, "Tải bài hát thành công: " + song.getName(), Toast.LENGTH_SHORT).show();
                                     }
 
                                     @Override
                                     public void onFailure(String error) {
                                         Log.e(TAG, "Lỗi khi tải lyrics: " + error);
+                                        Toast.makeText(context, "Lỗi khi tải lyrics!", Toast.LENGTH_SHORT).show();
                                     }
-                                }, context); // Truyền context vào đây
+                                }, context);
                             }
 
                             @Override
                             public void onFailure(String error) {
                                 Log.e(TAG, "Lỗi khi tải ảnh bìa: " + error);
+                                Toast.makeText(context, "Lỗi khi tải ảnh bìa!", Toast.LENGTH_SHORT).show();
                             }
-                        }, context); // Truyền context vào đây
+                        }, context);
                     }
 
                     @Override
                     public void onFailure(String error) {
                         Log.e(TAG, "Lỗi khi tải audio: " + error);
+                        Toast.makeText(context, "Lỗi khi tải audio!", Toast.LENGTH_SHORT).show();
                     }
-                }, context); // Truyền context vào đây
+                }, context);
             }
 
             @Override
             public void onFailure(Call<Song> call, Throwable t) {
                 Log.e(TAG, "Lỗi khi gọi API lấy chi tiết bài hát với ID " + songId + ": " + t.getMessage());
+                Toast.makeText(context, "Lỗi khi lấy chi tiết bài hát!", Toast.LENGTH_SHORT).show();
             }
         });
 
         // Vì enqueue là bất đồng bộ, không thể trả về boolean trực tiếp
-        // Giả sử thành công nếu không có lỗi ngay lập tức
         return true;
+    }
+
+    // Lấy danh sách bài hát đã tải xuống từ SQLite
+    public List<Song> getDownloadedSongs() {
+        return dbHelper.getAllDownloadedSongs();
     }
 
     // Callback interface để xử lý bất đồng bộ
