@@ -1,5 +1,4 @@
 package com.group06.music_app_mobile.api_client.api;
-import com.group06.music_app_mobile.api_client.responses.SongResponse;
 import com.group06.music_app_mobile.models.Song;
 
 import java.util.List;
