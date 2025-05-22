@@ -100,7 +100,7 @@ public class HomeFragment extends Fragment implements OnSongItemClickListener, O
         seeAllTextView2.setOnClickListener(v -> {
             // Replace vào fragment_container thay vì nav_home
             requireActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new AllSongsFragment())
+                    .replace(R.id.fragment_container, new AllPlaylistsFragment())
                     .addToBackStack(null)
                     .commit();
 

@@ -25,4 +25,5 @@ public class Playlist extends BaseEntity  implements Serializable {
     private boolean isLiked;
     private List<PlaylistLike> likes;
     private boolean isDeleted;
+
 }
