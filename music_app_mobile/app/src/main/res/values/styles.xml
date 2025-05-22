@@ -57,4 +57,18 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
+    <style name="CustomPopupMenu" parent="Widget.AppCompat.PopupMenu">
+        <item name="android:popupBackground">@color/app_background</item> <!-- Màu nền của menu -->
+        <item name="android:textColor">@color/text_white</item> <!-- Màu chữ của menu -->
+    </style>
+
+    <style name="RoundedDialog" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:background">@drawable/rounded_dialog_background</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@android:color/white</item>
+        <item name="android:backgroundTint">#333333</item> <!-- Nền tối cho dialog -->
+    </style>
+
 </resources>
