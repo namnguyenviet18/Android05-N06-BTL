@@ -33,7 +33,7 @@ public class DownloadUtil {
         // Kiểm tra xem bài hát đã được tải chưa
         if (dbHelper.isSongDownloaded(songId)) {
             Toast.makeText(context, "Bài hát này đã được tải!", Toast.LENGTH_SHORT).show();
-            return true;
+            return false;
         }
 
         // Gọi API để lấy chi tiết bài hát bất đồng bộ
