@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.group06.music_app_mobile.R;
+import com.group06.music_app_mobile.application.events.OnLyricItemClickListener;
 import com.group06.music_app_mobile.models.LyricLine;
 
 import java.util.List;
@@ -22,6 +23,8 @@ public class LyricAdapter extends RecyclerView.Adapter<LyricAdapter.LyricViewHol
     private List<LyricLine> lyrics;
     private Context context;
     private int currentSentence;
+
+    private OnLyricItemClickListener onLyricItemClickListener;
 
 
     public void setCurrentSentence(int position) {
@@ -36,11 +39,13 @@ public class LyricAdapter extends RecyclerView.Adapter<LyricAdapter.LyricViewHol
     public LyricAdapter(
             Context context,
             List<LyricLine> lyrics,
+            OnLyricItemClickListener onLyricItemClickListener,
             int currentSentence
     ) {
         this.context = context;
         this.lyrics = lyrics;
         this.currentSentence = currentSentence;
+        this.onLyricItemClickListener = onLyricItemClickListener;
     }
 
     @NonNull
@@ -63,6 +68,8 @@ public class LyricAdapter extends RecyclerView.Adapter<LyricAdapter.LyricViewHol
             holder.textView.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.text_white));
             holder.textView.setTypeface(null, Typeface.NORMAL);
         }
+
+        holder.itemView.setOnClickListener(v -> onLyricItemClickListener.onClick(line.getTime()));
     }
 
     @Override

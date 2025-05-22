@@ -21,6 +21,7 @@ import com.group06.music_app_mobile.api_client.api.LoadFileApi;
 import com.group06.music_app_mobile.app_utils.Constants;
 import com.group06.music_app_mobile.application.activities.PlayActivity;
 import com.group06.music_app_mobile.application.adapters.LyricAdapter;
+import com.group06.music_app_mobile.application.events.OnLyricItemClickListener;
 import com.group06.music_app_mobile.databinding.FragmentLyricBinding;
 import com.group06.music_app_mobile.models.LyricLine;
 
@@ -32,7 +33,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class LyricFragment extends Fragment {
+public class LyricFragment extends Fragment implements OnLyricItemClickListener {
 
     private List<LyricLine> lyrics;
     private LyricAdapter lyricAdapter;
@@ -48,7 +49,9 @@ public class LyricFragment extends Fragment {
         lyricAdapter = new LyricAdapter(
                 getContext(),
                 lyrics,
+                this,
                 -1
+
         );
 
         binding.lyricRecycler.setAdapter(lyricAdapter);
@@ -158,5 +161,27 @@ public class LyricFragment extends Fragment {
 
     private PlayActivity getPlayActivity() {
         return (PlayActivity) getActivity();
+    }
+
+    @Override
+    public void onClick(String time) {
+        int millis = convertTimeToMillis(time);
+        PlayActivity playActivity = getPlayActivity();
+        if (playActivity != null && playActivity.getMediaPlayer() != null) {
+            playActivity.getMediaPlayer().seekTo(millis);
+            playActivity.getBinding().positionText.setText(playActivity.getPositionText(millis));
+            playActivity.getBinding().seekBar.setProgress(millis);
+        }
+    }
+
+    private int convertTimeToMillis(String time) {
+        try {
+            String[] parts = time.split(":");
+            int minutes = Integer.parseInt(parts[0]);
+            int seconds = Integer.parseInt(parts[1]);
+            return (minutes * 60 + seconds) * 1000;
+        } catch (Exception e) {
+            return 0;
+        }
     }
 }

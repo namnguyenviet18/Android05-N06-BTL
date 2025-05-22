@@ -2,6 +2,7 @@ package com.group06.music_app_mobile.application.fragments;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -211,6 +212,11 @@ public class PlayFragment extends Fragment {
             return;
         }
 
+        ProgressDialog progressDialog = new ProgressDialog(requireContext());
+        progressDialog.setMessage("Đang xử lý...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
                 .writeTimeout(120, java.util.concurrent.TimeUnit.SECONDS)
@@ -252,6 +258,7 @@ public class PlayFragment extends Fragment {
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    progressDialog.dismiss();
                     requireActivity().runOnUiThread(() -> {
                         Toast.makeText(requireContext(), "Lỗi khi tải lên: " + e.getMessage(), Toast.LENGTH_LONG).show();
                         e.printStackTrace();
@@ -260,6 +267,7 @@ public class PlayFragment extends Fragment {
 
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    progressDialog.dismiss();
                     requireActivity().runOnUiThread(() -> {
                         if (response.isSuccessful()) {
                             Toast.makeText(requireContext(), "Thêm bài hát thành công!", Toast.LENGTH_SHORT).show();
@@ -273,6 +281,7 @@ public class PlayFragment extends Fragment {
             });
 
         } catch (Exception e) {
+            progressDialog.dismiss();
             requireActivity().runOnUiThread(() ->
                     Toast.makeText(requireContext(), "Lỗi: " + e.getMessage(), Toast.LENGTH_LONG).show());
         }

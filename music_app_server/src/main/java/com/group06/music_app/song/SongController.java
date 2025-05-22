@@ -141,6 +141,15 @@ public class SongController {
             return ResponseEntity.badRequest().body("Tên ca sĩ không được rỗng");
         }
         if (audioFile.isEmpty() || coverImage.isEmpty() || lyricFile.isEmpty()) {
+            if(audioFile.isEmpty()) {
+                System.err.println("Audio rỗng");
+            }
+            if(coverImage.isEmpty()) {
+                System.err.println("Image rỗng");
+            }
+            if(lyricFile.isEmpty()) {
+                System.err.println("Json rỗng");
+            }
             return ResponseEntity.badRequest().body("Các file không được rỗng");
         }
 

@@ -30,14 +30,17 @@ import java.io.IOException;
 import java.util.List;
 
 import lombok.Getter;
+import lombok.Setter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+@Getter
+@Setter
+
 public class PlayActivity extends AppCompatActivity {
 
     private ActivityPlayBinding binding;
-    @Getter
     private Song song;
 
     private List<Song> songs;
@@ -79,6 +82,10 @@ public class PlayActivity extends AppCompatActivity {
         setupButtonLike();
         setUpPreviousButton();
         setUpNextButton();
+
+        binding.toolbar.setNavigationOnClickListener(view -> {
+            finish();
+        });
     }
 
     @SuppressWarnings("unchecked")

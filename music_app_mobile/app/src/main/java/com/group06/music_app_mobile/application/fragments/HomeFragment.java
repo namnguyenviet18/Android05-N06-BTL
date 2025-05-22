@@ -140,4 +140,10 @@ public class HomeFragment extends Fragment implements OnSongItemClickListener, O
 
         popupMenu.show();
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        fetchSongs();
+    }
 }
