@@ -4,22 +4,19 @@ import static android.app.Activity.RESULT_OK;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-
 import com.group06.music_app_mobile.R;
 import com.group06.music_app_mobile.api_client.ApiClient;
 import com.group06.music_app_mobile.api_client.api.AuthApi;
@@ -30,45 +27,64 @@ import com.group06.music_app_mobile.app_utils.StorageService;
 import com.group06.music_app_mobile.application.activities.LoginActivity;
 import com.group06.music_app_mobile.databinding.FragmentAccountBinding;
 import com.group06.music_app_mobile.models.User;
-
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 
 public class AccountFragment extends Fragment {
 
+    private static final String TAG = "AccountFragment";
     private FragmentAccountBinding binding;
-
     private GoogleSignInClient mGoogleSignInClient;
     private ActivityResultLauncher<Intent> googleSignInLauncher;
-
+    private ActivityResultLauncher<Intent> pickImageLauncher; // Launcher để chọn ảnh
     private StorageService storageService;
     private AuthApi authApi;
     private UserApi userApi;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentAccountBinding.inflate(inflater, container, false);
         authApi = ApiClient.getClient(requireContext()).create(AuthApi.class);
         userApi = ApiClient.getClient(requireContext()).create(UserApi.class);
-        init();
-        binding.logout.setOnClickListener(view -> {
-            logout();
+
+        // Khởi tạo launcher để chọn ảnh
+        pickImageLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                Uri imageUri = result.getData().getData();
+                if (imageUri != null) {
+                    uploadAvatar(imageUri);
+                }
+            }
         });
+
+        init();
+        setupListeners();
         return binding.getRoot();
     }
 
     private void init() {
         storageService = StorageService.getInstance(requireContext());
-        if(storageService.getUser() == null) {
+        if (storageService.getUser() == null) {
             getProfile();
         }
-        disPlayUserInfo();
+        displayUserInfo();
     }
 
-    private void disPlayUserInfo() {
+    private void setupListeners() {
+        binding.logout.setOnClickListener(view -> logout());
+
+        // Xử lý sự kiện click vào icon chỉnh sửa ảnh đại diện
+        binding.editAvatar.setOnClickListener(v -> pickImage());
+    }
+
+    private void displayUserInfo() {
         User user = storageService.getUser();
         binding.userEmail.setText(user != null ? user.getEmail() : "");
         binding.userFirstname.setText(user != null ? user.getFirstName() : "");
@@ -79,14 +95,15 @@ public class AccountFragment extends Fragment {
 
     private void displayUserAvatar() {
         User user = storageService.getUser();
-        String avatarUrl = user.getAvatarUrl();
-        Glide.with(requireContext())
-                .load(avatarUrl.startsWith("https") ? avatarUrl:
-                        (Constants.FILE_LOAD_ENDPOINT + avatarUrl))
-                .centerCrop()
-                .placeholder(R.drawable.ic_user_fill)
-                .error(R.drawable.ic_user_fill)
-                .into(binding.avatar);
+        if (user != null) {
+            String avatarUrl = user.getAvatarUrl();
+            Glide.with(requireContext())
+                    .load(avatarUrl.startsWith("https") ? avatarUrl : (Constants.FILE_LOAD_ENDPOINT + avatarUrl))
+                    .centerCrop()
+                    .placeholder(R.drawable.ic_user_fill)
+                    .error(R.drawable.ic_user_fill)
+                    .into(binding.avatar);
+        }
     }
 
     private void getProfile() {
@@ -94,11 +111,14 @@ public class AccountFragment extends Fragment {
         call.enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
-                if(response.isSuccessful() && response.body() != null) {
+                if (response.isSuccessful() && response.body() != null) {
                     storageService.setUser(response.body());
-                    disPlayUserInfo();
+                    displayUserInfo();
+                } else {
+                    Toast.makeText(requireContext(), "Failed to fetch profile", Toast.LENGTH_SHORT).show();
                 }
             }
+
             @Override
             public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
                 Toast.makeText(requireContext(), "Network error!", Toast.LENGTH_SHORT).show();
@@ -107,31 +127,111 @@ public class AccountFragment extends Fragment {
     }
 
     private void logout() {
-//        ProgressDialog progressDialog = new ProgressDialog(requireContext());
-//        progressDialog.setMessage("Log out...");
-//        progressDialog.setCancelable(false);
-//        progressDialog.show();
+        ProgressDialog progressDialog = new ProgressDialog(requireContext());
+        progressDialog.setMessage("Logging out...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
 
         Call<Void> call = userApi.logout();
         call.enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-//                progressDialog.dismiss();
-                if(response.isSuccessful()) {
+                progressDialog.dismiss();
+                if (response.isSuccessful()) {
                     storageService.setTokens(new AuthenticationResponse("", ""));
                     Intent intent = new Intent(requireContext(), LoginActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
+                } else {
+                    Toast.makeText(requireContext(), "Logout failed", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-//                progressDialog.dismiss();
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                progressDialog.dismiss();
                 Toast.makeText(requireContext(), "Network error!", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    // Mở bộ chọn ảnh
+    private void pickImage() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        pickImageLauncher.launch(intent);
+    }
 
+    // Upload ảnh lên server
+    private void uploadAvatar(Uri imageUri) {
+        ProgressDialog progressDialog = new ProgressDialog(requireContext());
+        progressDialog.setMessage("Uploading avatar...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        try {
+            // Chuyển URI thành File để gửi lên server
+            File file = uriToFile(imageUri);
+            RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
+            MultipartBody.Part body = MultipartBody.Part.createFormData("avatar", file.getName(), requestFile);
+
+            // Lấy JWT từ StorageService
+            String jwtToken = storageService.getAccessToken();
+            if (jwtToken == null || jwtToken.isEmpty()) {
+                progressDialog.dismiss();
+                Toast.makeText(requireContext(), "Please log in to continue", Toast.LENGTH_SHORT).show();
+                return;
+
+            }
+
+            // Gửi request lên server
+            Call<User> call = userApi.changeAvatar("Bearer " + jwtToken, body);
+            call.enqueue(new Callback<User>() {
+                @Override
+                public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
+                    progressDialog.dismiss();
+                    if (response.isSuccessful() && response.body() != null) {
+                        // Cập nhật thông tin người dùng trong storage
+                        storageService.setUser(response.body());
+                        displayUserAvatar(); // Cập nhật ảnh đại diện
+                        Toast.makeText(requireContext(), "Avatar updated successfully", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(requireContext(), "Failed to update avatar", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
+                    progressDialog.dismiss();
+                    Log.e(TAG, "Upload error: " + t.getMessage(), t);
+                    Toast.makeText(requireContext(), "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        } catch (Exception e) {
+            progressDialog.dismiss();
+            Log.e(TAG, "Error converting URI to File: " + e.getMessage(), e);
+            Toast.makeText(requireContext(), "Error preparing image", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Chuyển URI thành File
+    private File uriToFile(Uri uri) throws Exception {
+        File file = new File(requireContext().getCacheDir(), "temp_avatar_" + System.currentTimeMillis() + ".jpg");
+        try (InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);
+             FileOutputStream outputStream = new FileOutputStream(file)) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+        }
+        return file;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 }
