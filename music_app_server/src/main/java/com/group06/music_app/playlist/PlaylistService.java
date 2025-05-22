@@ -11,6 +11,7 @@ import com.group06.music_app.song.response.FileStoreResult;
 import com.group06.music_app.song.response.SongResponse;
 import com.group06.music_app.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,15 +76,40 @@ public class PlaylistService {
     }
 
     @Transactional(readOnly = true)
-    public List<Playlist> getPlaylists() {
+    public List<PlaylistDetailResponse> getPlaylists() {
         List<Playlist> listPlaylist = playlistRepository.findAll();
-        for (Playlist p : listPlaylist) {
-            p.setUser(null);
-            p.setPlaylistLikes(Collections.emptyList());
-            p.setSongPlaylists(Collections.emptyList());
-        }
-        return listPlaylist;
+        return listPlaylist.stream()
+                .map(playlist -> PlaylistDetailResponse.builder()
+                        .id(playlist.getId())
+                        .name(playlist.getName())
+                        .isPublic(playlist.isPublic())
+                        .coverImageUrl(playlist.getCoverImageUrl())
+                        .userId(playlist.getUser().getId())
+                        .songCount(playlist.getSongPlaylists().size())
+                        .likeCount(playlist.getPlaylistLikes().size())
+                        .build())
+                .collect(Collectors.toList());
     }
+
+    @Transactional(readOnly = true)
+    public List<PlaylistDetailResponse> getLimitedPlaylists(int limit) {
+        if (limit <= 0) {
+            limit = 10;
+        }
+        List<Playlist> listPlaylist = playlistRepository.findAll(PageRequest.of(0, limit)).getContent();
+        return listPlaylist.stream()
+                .map(playlist -> PlaylistDetailResponse.builder()
+                        .id(playlist.getId())
+                        .name(playlist.getName())
+                        .isPublic(playlist.isPublic())
+                        .coverImageUrl(playlist.getCoverImageUrl())
+                        .userId(playlist.getUser().getId())
+                        .songCount(playlist.getSongPlaylists().size())
+                        .likeCount(playlist.getPlaylistLikes().size())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
 
     @Transactional(readOnly = true)
     public List<PlaylistDetailResponse> getUserPlaylists(Long userId) {
