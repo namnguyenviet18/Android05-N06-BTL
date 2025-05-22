@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="175dp"
+    android:layout_height="177dp"
+    android:layout_weight="1"
+    android:layout_marginEnd="8dp"
+    app:cardCornerRadius="8dp">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Background image -->
+        <ImageView
+            android:id="@+id/playlistImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/friday_party" />
+
+        <!-- Overlay content -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_gravity="bottom"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp">
+
+            <TextView
+                android:id="@+id/playlistTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Friday Party \nParty mood!"
+                android:paddingRight="10dp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/playIcon"
+                android:layout_width="20.5dp"
+                android:layout_height="20.5dp"
+                android:src="@drawable/ic_play_fill"
+                app:tint="#00C4B4" />
+        </LinearLayout>
+
+    </FrameLayout>
+</androidx.cardview.widget.CardView>
