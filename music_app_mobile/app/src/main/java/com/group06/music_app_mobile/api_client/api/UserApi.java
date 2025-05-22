@@ -22,8 +22,8 @@ public interface UserApi {
     @GET("user/profile")
     Call<User> getProfile();
 
-    @PATCH("user/update-profile")
-    Call<User> updateProfile(@Body EditProfileRequest request);
+    @PATCH("/api/v1/user/update-profile")
+    Call<User> updateProfile(@Header("Authorization") String authToken, @Body EditProfileRequest request);
 
 
 
