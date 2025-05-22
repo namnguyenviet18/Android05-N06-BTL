@@ -97,12 +97,16 @@ public class AccountFragment extends Fragment {
         User user = storageService.getUser();
         if (user != null) {
             String avatarUrl = user.getAvatarUrl();
-            Glide.with(requireContext())
-                    .load(avatarUrl.startsWith("https") ? avatarUrl : (Constants.FILE_LOAD_ENDPOINT + avatarUrl))
-                    .centerCrop()
-                    .placeholder(R.drawable.ic_user_fill)
-                    .error(R.drawable.ic_user_fill)
-                    .into(binding.avatar);
+            if (avatarUrl != null && !avatarUrl.isEmpty()) {
+                Glide.with(requireContext())
+                        .load(avatarUrl.startsWith("https") ? avatarUrl : (Constants.FILE_LOAD_ENDPOINT + avatarUrl))
+                        .centerCrop()
+                        .placeholder(R.drawable.ic_user_fill)
+                        .error(R.drawable.ic_user_fill)
+                        .into(binding.avatar);
+            } else {
+                binding.avatar.setImageResource(R.drawable.ic_user_fill);
+            }
         }
     }
 

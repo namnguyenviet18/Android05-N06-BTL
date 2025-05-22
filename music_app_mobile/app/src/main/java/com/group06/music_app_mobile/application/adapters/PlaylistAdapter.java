@@ -60,7 +60,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
         if (imageUrl != null && !imageUrl.isEmpty()) {
             if (!imageUrl.startsWith("http")) {
                 // Assuming ServerDestination is available
-                imageUrl = "http://" + ServerDestination.SERVER_HOST + ":" + ServerDestination.SERVER_PORT + imageUrl;
+                imageUrl = "http://" + ServerDestination.SERVER_HOST + ":" + ServerDestination.SERVER_PORT + "/api/v1/song/file/load?fullUrl=" + imageUrl;
             }
             Glide.with(context)
                     .load(imageUrl)

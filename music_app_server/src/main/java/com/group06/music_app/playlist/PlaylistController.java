@@ -37,9 +37,14 @@ public class PlaylistController {
 
     // Get all playlists
     @GetMapping("/")
-    public ResponseEntity<List<Playlist>> getPlaylists() {
-        System.out.println(1);
-        List<Playlist> playlists = playlistService.getPlaylists();
+    public ResponseEntity<List<PlaylistDetailResponse>> getPlaylists() {
+        List<PlaylistDetailResponse> playlists = playlistService.getPlaylists();
+        return ResponseEntity.ok(playlists);
+    }
+
+    @GetMapping("/limited")
+    public ResponseEntity<List<PlaylistDetailResponse>> getLimitedPlaylists(@RequestParam(defaultValue = "5") int limit) {
+        List<PlaylistDetailResponse> playlists = playlistService.getLimitedPlaylists(limit);
         return ResponseEntity.ok(playlists);
     }
 
