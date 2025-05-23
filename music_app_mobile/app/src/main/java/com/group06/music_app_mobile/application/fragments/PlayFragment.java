@@ -222,7 +222,7 @@ public class PlayFragment extends Fragment {
                 .writeTimeout(120, java.util.concurrent.TimeUnit.SECONDS)
                 .readTimeout(120, java.util.concurrent.TimeUnit.SECONDS)
                 .retryOnConnectionFailure(true)
-                .protocols(Arrays.asList(Protocol.HTTP_1_1, Protocol.HTTP_2)) // Ép dùng HTTP/1.1 hoặc HTTP/2
+                .protocols(Arrays.asList(Protocol.HTTP_1_1, Protocol.HTTP_2)) 
                 .build();
 
         try {

@@ -9,16 +9,20 @@ import com.group06.music_app_mobile.application.fragments.CoverImageFragment;
 import com.group06.music_app_mobile.application.fragments.LyricFragment;
 
 public class PlayPagerAdapter extends FragmentStateAdapter {
-    public PlayPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
+
+    private boolean isPlayDownloadedSong;
+    public PlayPagerAdapter(@NonNull FragmentActivity fragmentActivity, boolean isPlayDownloadedSong) {
         super(fragmentActivity);
+
+        this.isPlayDownloadedSong = isPlayDownloadedSong;
     }
 
     @NonNull
     @Override
     public Fragment createFragment(int position) {
         return position == 0 ?
-                new LyricFragment() :
-                new CoverImageFragment();
+                new LyricFragment(isPlayDownloadedSong) :
+                new CoverImageFragment(isPlayDownloadedSong);
     }
 
     @Override

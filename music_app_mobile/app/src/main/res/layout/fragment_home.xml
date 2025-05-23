@@ -67,50 +67,28 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center"
-        android:paddingBottom="10dp">
+        android:layout_marginBottom="16dp">
 
         <TextView
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
-            android:textSize="12sp"
-            android:paddingBottom="16sp"
+            android:layout_height="wrap_content"
+            android:text="All Playlists"
             android:textColor="@color/text_white"
-            android:text="Recommend"
-            />
+            android:textSize="16sp"
+            android:textStyle="bold"/>
 
         <TextView
-            android:layout_width="0dp"
+            android:id="@+id/seeAllTextView2"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Trending"
-            android:paddingBottom="16sp"
-            android:textSize="12sp"
+            android:text="See all"
             android:textColor="@color/text_white"
-            />
+            android:textSize="16sp"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true"/>
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Beauty"
-            android:paddingBottom="16sp"
-            android:textSize="12sp"
-            android:textColor="@color/text_white"/>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Business"
-            android:paddingBottom="16sp"
-            android:textSize="12sp"
-            android:textColor="@color/text_white" />
     </LinearLayout>
 
 

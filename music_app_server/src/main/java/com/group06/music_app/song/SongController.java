@@ -2,6 +2,7 @@ package com.group06.music_app.song;
 
 import com.group06.music_app.song.response.FileStoreResult;
 import com.group06.music_app.song.response.SongResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/song")
+@Tag(name = "Song")
 public class SongController {
 
     @Autowired

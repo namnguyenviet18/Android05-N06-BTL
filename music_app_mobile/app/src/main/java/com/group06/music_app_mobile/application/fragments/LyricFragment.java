@@ -25,7 +25,13 @@ import com.group06.music_app_mobile.application.events.OnLyricItemClickListener;
 import com.group06.music_app_mobile.databinding.FragmentLyricBinding;
 import com.group06.music_app_mobile.models.LyricLine;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +44,12 @@ public class LyricFragment extends Fragment implements OnLyricItemClickListener 
     private List<LyricLine> lyrics;
     private LyricAdapter lyricAdapter;
     private FragmentLyricBinding binding;
+
+    private boolean isPlayDownloadedSong;
+
+    public LyricFragment(boolean isPlayDownloadedSong) {
+        this.isPlayDownloadedSong = isPlayDownloadedSong;
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -127,37 +139,74 @@ public class LyricFragment extends Fragment implements OnLyricItemClickListener 
 
     private void loadLyricsFromJson() {
         PlayActivity playActivity = getPlayActivity();
-        if(playActivity.getSong() == null) {
-            return;
+        if (playActivity == null || playActivity.getSong() == null) return;
+
+        if (isPlayDownloadedSong) {
+            loadLyricsFromLocal(playActivity);
+
+        } else {
+            loadLyricsFromServer(playActivity);
         }
-//        String audioUrl = "http://" + SERVER_HOST + ":" + SERVER_PORT + "/api/v1/song/file/load?fullUrl=" + audioPath;
+    }
+
+    private void loadLyricsFromServer(PlayActivity playActivity) {
         LoadFileApi api = ApiClient.getClient(requireContext()).create(LoadFileApi.class);
-        api.getLyric(Constants.FILE_LOAD_ENDPOINT + playActivity.getSong().getLyrics())
-                .enqueue(new Callback<>() {
-                    @SuppressLint("NotifyDataSetChanged")
-                    @Override
-                    public void onResponse(Call<Map<String, String>> call, Response<Map<String, String>> response) {
-                        lyrics.clear();
-                        if (response.body() == null) {
-                            return;
+        try {
+            api.getLyric(Constants.FILE_LOAD_ENDPOINT + playActivity.getSong().getLyrics())
+                    .enqueue(new Callback<>() {
+                        @SuppressLint("NotifyDataSetChanged")
+                        @Override
+                        public void onResponse(Call<Map<String, String>> call, Response<Map<String, String>> response) {
+                            lyrics.clear();
+                            if (response.body() == null) return;
+                            for (Map.Entry<String, String> entry : response.body().entrySet()) {
+                                lyrics.add(LyricLine.builder()
+                                        .time(entry.getKey())
+                                        .text(entry.getValue())
+                                        .build());
+                            }
+                            lyricAdapter.notifyDataSetChanged();
                         }
-                        for (Map.Entry<String, String> entry : response.body().entrySet()) {
-                            lyrics.add(LyricLine.builder()
-                                    .time(entry.getKey())
-                                    .text(entry.getValue())
-                                    .build());
+
+                        @Override
+                        public void onFailure(Call<Map<String, String>> call, Throwable t) {
+                            Log.e("LyricFragment", "API failed: " + t.getMessage());
                         }
-                        lyricAdapter.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onFailure(Call<Map<String, String>> call, Throwable t) {
-
-                    }
-                });
+                    });
+        } catch (Exception exp) {
+            System.err.print(exp.getMessage());
+        }
 
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    private void loadLyricsFromLocal(PlayActivity playActivity) {
+        try {
+            Log.d("LyricFragment", String.valueOf(playActivity.getSong().getLyrics()));
+            File file = new File(playActivity.getSong().getLyrics());
+            if (!file.exists()) return;
+
+            StringBuilder jsonBuilder = new StringBuilder();
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                jsonBuilder.append(line);
+            }
+            reader.close();
+
+            JSONObject jsonObject = new JSONObject(jsonBuilder.toString());
+            lyrics.clear();
+            Iterator<String> keys = jsonObject.keys();
+            while (keys.hasNext()) {
+                String time = keys.next();
+                String text = jsonObject.getString(time);
+                lyrics.add(LyricLine.builder().time(time).text(text).build());
+            }
+            lyricAdapter.notifyDataSetChanged();
+        } catch (Exception e) {
+            Log.e("LyricFragment", "Error reading local lyric file", e);
+        }
+    }
 
     private PlayActivity getPlayActivity() {
         return (PlayActivity) getActivity();

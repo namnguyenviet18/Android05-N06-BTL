@@ -19,6 +19,12 @@ public class CoverImageFragment extends Fragment {
 
     private FragmentCoverImageBinding binding;
 
+    private boolean isPlayDownloadedSong;
+
+    public CoverImageFragment(boolean isPlayDownloadedSong) {
+        this.isPlayDownloadedSong = isPlayDownloadedSong;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -30,14 +36,33 @@ public class CoverImageFragment extends Fragment {
 
     private void displayImage() {
         PlayActivity playActivity = getPlayActivity();
-        if(playActivity == null) {
+        if (playActivity == null) {
             return;
         }
+
         Song song = playActivity.getSong();
-        Glide.with(this)
-                .load(Constants.FILE_LOAD_ENDPOINT + song.getCoverImageUrl())
-                .centerCrop()
-                .into(binding.coverImageView);
+        try {
+            if (isPlayDownloadedSong) {
+                // Load ảnh từ file local
+                Glide.with(this)
+                        .load("file://" + song.getCoverImageUrl())  // dùng prefix "file://" để Glide hiểu là local file
+                        .centerCrop()
+                        .placeholder(R.drawable.default_cover)
+                        .error(R.drawable.default_cover)  // ảnh mặc định nếu load lỗi
+                        .into(binding.coverImageView);
+            } else {
+                // Load ảnh từ server (API)
+                Glide.with(this)
+                        .load(Constants.FILE_LOAD_ENDPOINT + song.getCoverImageUrl())
+                        .centerCrop()
+                        .placeholder(R.drawable.default_cover)
+                        .error(R.drawable.default_cover)
+                        .into(binding.coverImageView);
+            }
+        } catch (Exception exp) {
+            System.err.println(exp.getMessage());
+        }
+
     }
 
     private PlayActivity getPlayActivity() {

@@ -7,8 +7,10 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -18,6 +20,7 @@ import com.group06.music_app_mobile.R;
 import com.group06.music_app_mobile.api_client.ApiClient;
 import com.group06.music_app_mobile.api_client.api.SongApi;
 import com.group06.music_app_mobile.app_utils.Constants;
+import com.group06.music_app_mobile.app_utils.DownloadUtil;
 import com.group06.music_app_mobile.app_utils.enums.DataTransferBetweenScreens;
 import com.group06.music_app_mobile.app_utils.enums.PlayMode;
 import com.group06.music_app_mobile.application.adapters.PlayPagerAdapter;
@@ -56,10 +59,14 @@ public class PlayActivity extends AppCompatActivity {
 
     private PlayPagerAdapter playPagerAdapter;
 
+    private DownloadUtil downloadUtil;
+
     private ViewGroup.LayoutParams selectedParams;
     private ViewGroup.LayoutParams unselectedParams;
 
     private PlayMode playMode;
+
+    private boolean isPlayDownloadedSong = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +76,6 @@ public class PlayActivity extends AppCompatActivity {
 
         init();
 
-        playPagerAdapter = new PlayPagerAdapter(this);
-        binding.playViewpager.setAdapter(playPagerAdapter);
         if (songs.isEmpty() || song == null) {
             return;
         }
@@ -82,6 +87,7 @@ public class PlayActivity extends AppCompatActivity {
         setupButtonLike();
         setUpPreviousButton();
         setUpNextButton();
+        setUpDownloadButton();
 
         binding.toolbar.setNavigationOnClickListener(view -> {
             finish();
@@ -92,6 +98,7 @@ public class PlayActivity extends AppCompatActivity {
     private void init() {
         songs = (List<Song>) getIntent().getSerializableExtra(DataTransferBetweenScreens.SONG_LIST.name());
         currentSongPosition = getIntent().getIntExtra(DataTransferBetweenScreens.CURRENT_SONG_POSITION.name(), 0);
+        isPlayDownloadedSong = getIntent().getBooleanExtra(DataTransferBetweenScreens.PLAY_DOWNLOADED_SONG.name(), false);
         Log.d("SIZE - INDEX", songs.size() + " - " + currentSongPosition);
         song = songs.get(currentSongPosition);
         if (songs.isEmpty() || song == null) {
@@ -112,14 +119,24 @@ public class PlayActivity extends AppCompatActivity {
         }
         binding.dot0.setLayoutParams(selectedParams);
         binding.dot0.setLayoutParams(unselectedParams);
+        playPagerAdapter = new PlayPagerAdapter(this, isPlayDownloadedSong);
+        binding.playViewpager.setAdapter(playPagerAdapter);
+        downloadUtil = new DownloadUtil(this);
         whenDot0Selected();
         initMediaPlayer();
     }
 
     public void displayInfo() {
         binding.songName.setText(song.getName());
-        binding.likeText.setText(String.valueOf(song.getLikeCount()) + " likes");
-        binding.commentText.setText(String.valueOf(song.getCommentCount()) + " comments");
+        if(isPlayDownloadedSong) {
+            binding.likeLayout.setVisibility(View.GONE);
+            binding.download.setVisibility(View.GONE);
+        } else {
+            binding.likeLayout.setVisibility(View.VISIBLE);
+            binding.download.setVisibility(View.VISIBLE);
+            binding.likeText.setText(String.valueOf(song.getLikeCount()) + " likes");
+            binding.commentText.setText(String.valueOf(song.getCommentCount()) + " comments");
+        }
         StringBuilder songAuthor = new StringBuilder();
         if(song.getSingerName() != null && !song.getSingerName().trim().isEmpty()) {
             songAuthor.append("Performed by ").append(song.getSingerName());
@@ -142,7 +159,13 @@ public class PlayActivity extends AppCompatActivity {
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
         try {
-            mediaPlayer.setDataSource(Constants.FILE_LOAD_ENDPOINT + song.getAudioUrl());
+            String path;
+            if(isPlayDownloadedSong) {
+                path = song.getFileUrl();
+            } else {
+                path = Constants.FILE_LOAD_ENDPOINT + song.getAudioUrl();
+            }
+            mediaPlayer.setDataSource(path);
             mediaPlayer.prepareAsync();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -247,6 +270,14 @@ public class PlayActivity extends AppCompatActivity {
         });
     }
 
+    private void setUpDownloadButton() {
+        binding.download.setOnClickListener(view -> {
+            if (song == null) {
+                return;
+            }
+            downloadSong(song);
+        });
+    }
     private void whenDot0Selected() {
         binding.dot0.setLayoutParams(selectedParams);
         binding.dot1.setLayoutParams(unselectedParams);
@@ -324,6 +355,7 @@ public class PlayActivity extends AppCompatActivity {
             previous();
         });
     }
+    @SuppressLint("NotifyDataSetChanged")
     private void next() {
         if (currentSongPosition == songs.size() - 1) {
             currentSongPosition = 0;
@@ -331,11 +363,14 @@ public class PlayActivity extends AppCompatActivity {
             currentSongPosition++;
         }
         song = songs.get(currentSongPosition);
+        playPagerAdapter = new PlayPagerAdapter(this, isPlayDownloadedSong);
+        binding.playViewpager.setAdapter(playPagerAdapter);
         displayInfo();
         initMediaPlayer();
 
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void previous() {
         if (currentSongPosition == 0) {
             currentSongPosition = songs.size() - 1;
@@ -343,10 +378,13 @@ public class PlayActivity extends AppCompatActivity {
             currentSongPosition--;
         }
         song = songs.get(currentSongPosition);
+        playPagerAdapter = new PlayPagerAdapter(this, isPlayDownloadedSong);
+        binding.playViewpager.setAdapter(playPagerAdapter);
         displayInfo();
         initMediaPlayer();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void releaseMediaPlayer() {
         if (mediaPlayer != null) {
             if (mediaPlayer.isPlaying()) {
@@ -404,6 +442,17 @@ public class PlayActivity extends AppCompatActivity {
             commentBottomSheetFragment.show(getSupportFragmentManager(), "comment_bottom_sheet");
         });
     }
+
+    private void downloadSong(Song song) {
+        long songId = song.getId();
+        boolean success = downloadUtil.downloadSongById(this, songId);
+        if (success) {
+            Toast.makeText(this, "Đã tải bài hát: " + song.getName(), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Tải bài hát thất bại: " + song.getName(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     @Override
     protected void onDestroy() {

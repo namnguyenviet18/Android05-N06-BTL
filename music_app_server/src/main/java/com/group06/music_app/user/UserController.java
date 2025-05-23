@@ -48,5 +48,5 @@ public class UserController {
     ) {
         return ResponseEntity.ok(service.changeAvatar(avatar, currentUser));
     }
-
+    
 }

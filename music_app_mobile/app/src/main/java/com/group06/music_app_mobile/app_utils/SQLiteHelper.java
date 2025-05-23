@@ -6,6 +6,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.group06.music_app_mobile.models.Song;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class SQLiteHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "music_app.db";
@@ -106,5 +111,36 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return path;
+    }
+
+    // Thêm phương thức để lấy danh sách tất cả bài hát đã tải
+    public List<Song> getAllDownloadedSongs() {
+        List<Song> downloadedSongs = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_DOWNLOADED_SONGS, null, null, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Song song = new Song();
+                song.setId(cursor.getLong(cursor.getColumnIndexOrThrow("id")));
+                song.setName(cursor.getString(cursor.getColumnIndexOrThrow("name")));
+                song.setAuthorName(cursor.getString(cursor.getColumnIndexOrThrow("author_name")));
+                song.setSingerName(cursor.getString(cursor.getColumnIndexOrThrow("singer_name")));
+                song.setFileUrl(cursor.getString(cursor.getColumnIndexOrThrow("local_audio_path")));
+                song.setCoverImageUrl(cursor.getString(cursor.getColumnIndexOrThrow("local_cover_image_path")));
+                song.setLyricsUrl(cursor.getString(cursor.getColumnIndexOrThrow("local_lyrics_path")));
+                downloadedSongs.add(song);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return downloadedSongs;
+    }
+
+    // Thêm phương thức để xóa bài hát khỏi cơ sở dữ liệu
+    public void deleteDownloadedSong(long songId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_DOWNLOADED_SONGS, "id = ?", new String[]{String.valueOf(songId)});
+        db.close();
     }
 }

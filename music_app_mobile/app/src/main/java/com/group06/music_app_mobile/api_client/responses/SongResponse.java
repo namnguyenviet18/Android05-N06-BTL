@@ -1,5 +1,7 @@
 package com.group06.music_app_mobile.api_client.responses;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SongResponse {
+public class SongResponse implements Serializable {
     private long id;
     private String name;
     private String authorName;

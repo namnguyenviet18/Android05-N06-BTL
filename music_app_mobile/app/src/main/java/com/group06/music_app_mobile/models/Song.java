@@ -1,5 +1,8 @@
 package com.group06.music_app_mobile.models;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -21,8 +24,10 @@ public class Song extends BaseEntity implements Serializable {
     private String audioUrl;
     private String coverImageUrl;
     private String lyrics;
+    private String lyricsUrl;
     private String fileName;
     private String fileExtension;
+    private String fileUrl;
     private long likeCount;
     private long commentCount;
     private List<SongLike> likes;
@@ -97,7 +102,6 @@ public class Song extends BaseEntity implements Serializable {
     public User getUser() {
         return user;
     }
-
     public long getViewCount() {
         return viewCount;
     }
