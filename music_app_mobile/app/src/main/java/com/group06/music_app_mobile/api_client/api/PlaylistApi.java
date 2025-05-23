@@ -59,4 +59,7 @@ public interface PlaylistApi {
             @Path("playlistId") Long playlistId,
             @Header("Authorization") String authToken
     );
+
+    @GET("playlist/limited")
+    Call<List<Playlist>> getLimitedPlaylists(@Query("limit") int limit);
 }

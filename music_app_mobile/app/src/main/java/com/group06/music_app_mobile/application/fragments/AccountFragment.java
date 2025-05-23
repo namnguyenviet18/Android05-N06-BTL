@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.group06.music_app_mobile.R;
 import com.group06.music_app_mobile.api_client.ApiClient;
 import com.group06.music_app_mobile.api_client.api.AuthApi;
@@ -25,6 +24,7 @@ import com.group06.music_app_mobile.api_client.responses.AuthenticationResponse;
 import com.group06.music_app_mobile.app_utils.Constants;
 import com.group06.music_app_mobile.app_utils.StorageService;
 import com.group06.music_app_mobile.application.activities.LoginActivity;
+import com.group06.music_app_mobile.application.activities.UpdateProfileActivity;
 import com.group06.music_app_mobile.databinding.FragmentAccountBinding;
 import com.group06.music_app_mobile.models.User;
 import okhttp3.MediaType;
@@ -41,9 +41,8 @@ public class AccountFragment extends Fragment {
 
     private static final String TAG = "AccountFragment";
     private FragmentAccountBinding binding;
-    private GoogleSignInClient mGoogleSignInClient;
-    private ActivityResultLauncher<Intent> googleSignInLauncher;
-    private ActivityResultLauncher<Intent> pickImageLauncher; // Launcher để chọn ảnh
+    private ActivityResultLauncher<Intent> pickImageLauncher;
+    private ActivityResultLauncher<Intent> updateProfileLauncher; // Thêm launcher cho UpdateProfileActivity
     private StorageService storageService;
     private AuthApi authApi;
     private UserApi userApi;
@@ -61,6 +60,15 @@ public class AccountFragment extends Fragment {
                 if (imageUri != null) {
                     uploadAvatar(imageUri);
                 }
+            }
+        });
+
+        // Khởi tạo launcher để xử lý kết quả từ UpdateProfileActivity
+        updateProfileLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK) {
+                // Làm mới thông tin người dùng sau khi cập nhật
+                getProfile();
+                Toast.makeText(requireContext(), "Profile updated successfully", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -82,6 +90,12 @@ public class AccountFragment extends Fragment {
 
         // Xử lý sự kiện click vào icon chỉnh sửa ảnh đại diện
         binding.editAvatar.setOnClickListener(v -> pickImage());
+
+        // Xử lý sự kiện click vào Edit Profile
+        binding.editProfile.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), UpdateProfileActivity.class);
+            updateProfileLauncher.launch(intent);
+        });
     }
 
     private void displayUserInfo() {
@@ -159,14 +173,12 @@ public class AccountFragment extends Fragment {
         });
     }
 
-    // Mở bộ chọn ảnh
     private void pickImage() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         pickImageLauncher.launch(intent);
     }
 
-    // Upload ảnh lên server
     private void uploadAvatar(Uri imageUri) {
         ProgressDialog progressDialog = new ProgressDialog(requireContext());
         progressDialog.setMessage("Uploading avatar...");
@@ -174,30 +186,25 @@ public class AccountFragment extends Fragment {
         progressDialog.show();
 
         try {
-            // Chuyển URI thành File để gửi lên server
             File file = uriToFile(imageUri);
             RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
             MultipartBody.Part body = MultipartBody.Part.createFormData("avatar", file.getName(), requestFile);
 
-            // Lấy JWT từ StorageService
             String jwtToken = storageService.getAccessToken();
             if (jwtToken == null || jwtToken.isEmpty()) {
                 progressDialog.dismiss();
                 Toast.makeText(requireContext(), "Please log in to continue", Toast.LENGTH_SHORT).show();
                 return;
-
             }
 
-            // Gửi request lên server
             Call<User> call = userApi.changeAvatar("Bearer " + jwtToken, body);
             call.enqueue(new Callback<User>() {
                 @Override
                 public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                     progressDialog.dismiss();
                     if (response.isSuccessful() && response.body() != null) {
-                        // Cập nhật thông tin người dùng trong storage
                         storageService.setUser(response.body());
-                        displayUserAvatar(); // Cập nhật ảnh đại diện
+                        displayUserAvatar();
                         Toast.makeText(requireContext(), "Avatar updated successfully", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(requireContext(), "Failed to update avatar", Toast.LENGTH_SHORT).show();
@@ -219,7 +226,6 @@ public class AccountFragment extends Fragment {
         }
     }
 
-    // Chuyển URI thành File
     private File uriToFile(Uri uri) throws Exception {
         File file = new File(requireContext().getCacheDir(), "temp_avatar_" + System.currentTimeMillis() + ".jpg");
         try (InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);

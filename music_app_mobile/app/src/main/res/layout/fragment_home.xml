@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="4dp"
-        android:text="Hello Vini,"
+        android:text="Hello You,"
         android:textColor="@color/text_white"
         android:textSize="16sp"
         android:textStyle="bold" />
@@ -27,41 +27,6 @@
         android:textSize="14sp"
         android:paddingBottom="16dp"/>
 
-    <!-- Search Bar -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/rounded_input"
-        android:orientation="horizontal"
-        android:paddingVertical="7dp"
-        android:paddingHorizontal="8dp"
-        android:layout_marginBottom="16dp"
-        android:gravity="center_vertical"
-        android:backgroundTint="@color/text_white">
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@android:drawable/ic_menu_search"
-            app:tint="#000000"/>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="Search"
-            android:textColor="@color/text_input"
-            android:textSize="16sp"
-            android:paddingStart="8dp"/>
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@android:drawable/ic_btn_speak_now"
-            app:tint="@color/color_mic"/>
-
-    </LinearLayout>
-
     <!-- Category Chips -->
     <LinearLayout
         android:layout_width="match_parent"
@@ -73,7 +38,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="All Playlists"
+            android:text="Hot Playlists"
             android:textColor="@color/text_white"
             android:textSize="16sp"
             android:textStyle="bold"/>
@@ -100,52 +65,17 @@
         android:orientation="horizontal"
         android:layout_marginBottom="16dp">
 
-        <!-- Friday Party Card -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="173dp"
+        <!-- RecyclerView for Party Cards -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/partyRecyclerView"
+            android:layout_width="match_parent"
             android:layout_height="177dp"
-            android:layout_weight="1"
-            android:layout_marginEnd="8dp"
-            app:cardCornerRadius="8dp">
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <!-- Background image -->
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/friday_party" />
-
-                <!-- Overlay content -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:layout_gravity="bottom"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingHorizontal="16dp"> <!-- semi-transparent black -->
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Friday Party \nParty mood!"
-                        android:textStyle="bold"
-                        android:textColor="#FFFFFF"
-                        android:textSize="14sp" />
-
-                    <ImageView
-                        android:layout_width="20.5dp"
-                        android:layout_height="20.5dp"
-                        android:src="@drawable/ic_play_fill"
-                        app:tint="#00C4B4" />
-                </LinearLayout>
-
-            </FrameLayout>
-        </androidx.cardview.widget.CardView>
+            android:layout_marginBottom="16dp"
+            android:clipToPadding="false"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:orientation="horizontal" />
 
 
 

@@ -2,6 +2,8 @@ package com.group06.music_app_mobile.application.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -120,15 +122,25 @@ public class FavoriteFragment extends Fragment {
     }
 
     private void showPopupMenu(View view) {
-        PopupMenu popupMenu = new PopupMenu(getContext(), view, 0, 0, R.style.CustomPopupMenu);
-        popupMenu.getMenu().add("Download");
+        PopupMenu popupMenu = new PopupMenu(requireContext(), view);
+        popupMenu.getMenuInflater().inflate(R.menu.popup_menu, popupMenu.getMenu());
+
+        // Đổi màu chữ thủ công
+        for (int i = 0; i < popupMenu.getMenu().size(); i++) {
+            MenuItem item = popupMenu.getMenu().getItem(i);
+            SpannableString spanString = new SpannableString(item.getTitle());
+            spanString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.text_white)), 0, spanString.length(), 0);
+            item.setTitle(spanString);
+        }
+
         popupMenu.setOnMenuItemClickListener(item -> {
-            if (item.getTitle().equals("Download")) {
+            if (item.getItemId() == R.id.action_download) {
                 downloadSelectedSong();
                 return true;
             }
             return false;
         });
+
         popupMenu.show();
     }
 

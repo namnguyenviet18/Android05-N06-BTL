@@ -5,6 +5,7 @@ import com.group06.music_app.playlist.responses.PlaylistDetailResponse;
 import com.group06.music_app.playlist.responses.PlaylistResponse;
 import com.group06.music_app.playlist.responses.SongInPlaylistResponse;
 import com.group06.music_app.song.Song;
+import com.group06.music_app.song.SongMapper;
 import com.group06.music_app.song.SongRepository;
 import com.group06.music_app.song.SongService;
 import com.group06.music_app.song.response.FileStoreResult;
@@ -39,6 +40,9 @@ public class PlaylistService {
 
     @Autowired
     private SongService songService;
+
+    @Autowired
+    private SongMapper songMapper;
 
     @Transactional
     public PlaylistResponse createPlaylist(String name, boolean isPublic, MultipartFile coverImage, Authentication authentication) {
@@ -262,17 +266,7 @@ public class PlaylistService {
         List<SongResponse> songs = songPlaylists.stream()
                 .map(songPlaylist -> {
                     Song song = songPlaylist.getSong();
-                    return SongResponse.builder()
-                            .id(song.getId())
-                            .name(song.getName()) // Assuming Song has getTitle() instead of getName()
-                            .authorName(song.getAuthorName() != null ? song.getAuthorName() : null) // Assuming Song has a related Author entity
-                            .singerName(song.getSingerName()!= null ? song.getSingerName() : null) // Assuming Song has getArtist() for singer name
-                            .audioUrl(song.getAudioUrl()) // Assuming getFilePath() maps to audioUrl
-                            .coverImageUrl(song.getCoverImageUrl()) // Assuming Song has getCoverImageUrl()
-                            .lyrics(song.getLyrics()) // Assuming Song has getLyrics()
-                            .isPublic(song.isPublic()) // Assuming Song has isPublic()
-                            .duration(song.getDuration()) // Assuming Song has getDuration()
-                            .build();
+                    return songMapper.toSongResponse(song, user);
                 })
                 .collect(Collectors.toList());
 

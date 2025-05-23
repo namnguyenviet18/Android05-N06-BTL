@@ -43,8 +43,8 @@ public class SongListFragment extends Fragment implements OnSongItemClickListene
     private static final String TAG = "SongListFragment";
     private RecyclerView recyclerSongs;
     private SongResponseAdapter adapter;
-    private List<SongResponse> songList;
-    private List<SongResponse> originalSongList;
+    private List<Song> songList;
+    private List<Song> originalSongList;
     private EditText searchInput;
     private String playlistId;
 
@@ -155,10 +155,10 @@ public class SongListFragment extends Fragment implements OnSongItemClickListene
                     return;
                 }
 
-                List<SongResponse> songs;
+                List<Song> songs;
                 try {
                     Gson gson = new Gson();
-                    Type listType = new TypeToken<List<SongResponse>>(){}.getType();
+                    Type listType = new TypeToken<List<Song>>(){}.getType();
                     System.out.println(jsonResponse);
                     songs = gson.fromJson(jsonResponse, listType);
                     if (songs == null || songs.isEmpty()) {
@@ -202,7 +202,7 @@ public class SongListFragment extends Fragment implements OnSongItemClickListene
         }
     }
 
-    private void updateSongData(List<SongResponse> filteredList) {
+    private void updateSongData(List<Song> filteredList) {
         songList.clear();
         if (filteredList != null) {
             songList.addAll(filteredList);
@@ -214,12 +214,12 @@ public class SongListFragment extends Fragment implements OnSongItemClickListene
     }
 
     private void filterSongs(String query) {
-        List<SongResponse> filteredList = new ArrayList<>();
+        List<Song> filteredList = new ArrayList<>();
         Log.d(TAG, "Filtering songs, original size: " + originalSongList.size());
         if (query.isEmpty()) {
             filteredList.addAll(originalSongList);
         } else {
-            for (SongResponse song : originalSongList) {
+            for (Song song : originalSongList) {
                 if (song.getName() != null && song.getName().toLowerCase().contains(query.toLowerCase())) {
                     filteredList.add(song);
                 }
@@ -232,31 +232,24 @@ public class SongListFragment extends Fragment implements OnSongItemClickListene
     @Override
     public void toPlayActivity(int currentSongPosition) {
         Log.d(TAG, "Opening PlayActivity with position: " + currentSongPosition + ", songList size: " + songList.size());
-
-        // Chuyển đổi songList từ List<SongResponse> sang List<Song>
-        List<Song> songs = new ArrayList<>();
-        for (SongResponse songResponse : songList) {
-            songs.add(convertToSong(songResponse));
-        }
-
         Intent intent = new Intent(requireActivity(), PlayActivity.class);
-        intent.putExtra("SONG_LIST", (java.io.Serializable) songs); // Truyền List<Song> thay vì List<SongResponse>
+        intent.putExtra("SONG_LIST", (java.io.Serializable) songList); // Truyền List<Song> thay vì List<SongResponse>
         intent.putExtra("CURRENT_SONG_POSITION", currentSongPosition);
         startActivity(intent);
     }
 
-    // Phương thức chuyển đổi SongResponse sang Song
-    private Song convertToSong(SongResponse songResponse) {
-        Song song = new Song(); // Giả định Song có constructor mặc định
-        song.setId(songResponse.getId());
-        song.setName(songResponse.getName());
-        song.setAuthorName(songResponse.getAuthorName());
-        song.setSingerName(songResponse.getSingerName());
-        song.setAudioUrl(songResponse.getAudioUrl());
-        song.setCoverImageUrl(songResponse.getCoverImageUrl());
-        song.setLyrics(songResponse.getLyrics());
-        song.setPublic(songResponse.isPublic());
-        song.setDuration(songResponse.getDuration() * 1000); // Chuyển từ giây sang mili giây
-        return song;
-    }
+//    // Phương thức chuyển đổi SongResponse sang Song
+//    private Song convertToSong(SongResponse songResponse) {
+//        Song song = new Song(); // Giả định Song có constructor mặc định
+//        song.setId(songResponse.getId());
+//        song.setName(songResponse.getName());
+//        song.setAuthorName(songResponse.getAuthorName());
+//        song.setSingerName(songResponse.getSingerName());
+//        song.setAudioUrl(songResponse.getAudioUrl());
+//        song.setCoverImageUrl(songResponse.getCoverImageUrl());
+//        song.setLyrics(songResponse.getLyrics());
+//        song.setPublic(songResponse.isPublic());
+//        song.setDuration(songResponse.getDuration() * 1000); // Chuyển từ giây sang mili giây
+//        return song;
+//    }
 }

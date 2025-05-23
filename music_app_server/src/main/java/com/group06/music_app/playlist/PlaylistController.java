@@ -97,7 +97,10 @@ public class PlaylistController {
         return ResponseEntity.ok(message);
     }
     @GetMapping("/{playlistId}/songs/user")
-    public ResponseEntity<List<SongResponse>> getSongsByPlaylistId(@PathVariable Long playlistId, Authentication authentication) {
+    public ResponseEntity<List<SongResponse>> getSongsByPlaylistId(
+            @PathVariable Long playlistId,
+            Authentication authentication
+    ) {
         User user = (User) authentication.getPrincipal();
         List<SongResponse> songs = playlistService.getSongsByPlaylistId(playlistId, user);
         return ResponseEntity.ok(songs);

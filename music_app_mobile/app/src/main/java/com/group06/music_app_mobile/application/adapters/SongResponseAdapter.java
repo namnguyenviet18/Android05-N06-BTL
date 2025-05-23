@@ -34,7 +34,7 @@ import java.util.Locale;
 
 public class SongResponseAdapter extends RecyclerView.Adapter<SongResponseAdapter.SongViewHolder> {
 
-    private List<SongResponse> songList;
+    private List<Song> songList;
     private final Context context;
 
     // MediaPlayer và Handler quản lý việc play nhạc và cập nhật UI thời gian
@@ -50,7 +50,7 @@ public class SongResponseAdapter extends RecyclerView.Adapter<SongResponseAdapte
     private OnSongItemClickListener onSongItemClickListener;
     private OnLongItemClickListener onLongItemClickListener;
 
-    public SongResponseAdapter(Context context, List<SongResponse> songList) {
+    public SongResponseAdapter(Context context, List<Song> songList) {
         this.context = context;
         this.songList = new ArrayList<>(songList != null ? songList : new ArrayList<>());
         mediaPlayer = new MediaPlayer();
@@ -58,7 +58,7 @@ public class SongResponseAdapter extends RecyclerView.Adapter<SongResponseAdapte
 
     public SongResponseAdapter(
             Context context,
-            List<SongResponse> songList,
+            List<Song> songList,
             OnSongItemClickListener onSongItemClickListener,
             OnLongItemClickListener onLongItemClickListener
     ) {
@@ -111,10 +111,10 @@ public class SongResponseAdapter extends RecyclerView.Adapter<SongResponseAdapte
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull SongViewHolder holder, int position) {
-        SongResponse songResponse = songList.get(position);
+        Song song = songList.get(position);
 
         // Tải ảnh bìa
-        String coverImageUrl = songResponse.getCoverImageUrl();
+        String coverImageUrl = song.getCoverImageUrl();
         String fullImageUrl = "http://" + SERVER_HOST + ":" + SERVER_PORT + "/api/v1/song/file/load?fullUrl=" + coverImageUrl;
         Glide.with(context)
                 .load(fullImageUrl)
@@ -123,20 +123,20 @@ public class SongResponseAdapter extends RecyclerView.Adapter<SongResponseAdapte
                 .into(holder.imgCover);
 
         // Thiết lập tiêu đề
-        holder.txtTitle.setText(songResponse.getName() != null ? songResponse.getName() : "Không rõ");
+        holder.txtTitle.setText(song.getName() != null ? song.getName() : "Không rõ");
 
         // Thiết lập phụ đề
-        String subtitle = (songResponse.getAuthorName() != null ? songResponse.getAuthorName() : "Không rõ") +
-                (songResponse.getSingerName() != null && !songResponse.getSingerName().isEmpty()
-                        ? " • " + songResponse.getSingerName()
+        String subtitle = (song.getAuthorName() != null ? song.getAuthorName() : "Không rõ") +
+                (song.getSingerName() != null && !song.getSingerName().isEmpty()
+                        ? " • " + song.getSingerName()
                         : "");
         holder.txtSubtitle.setText(subtitle);
 
         // Thiết lập thời lượng
-        long durationInMillis = songResponse.getDuration() * 1000; // Chuyển từ giây sang mili giây
+        long durationInMillis = song.getDuration() * 1000; // Chuyển từ giây sang mili giây
         String formattedDuration = formatTime(durationInMillis);
         String displayTime = "0:00 / " + (durationInMillis > 0 ? formattedDuration : "?:??");
-        if (songResponse.getId() == playingSongId && mediaPlayer != null) {
+        if (song.getId() == playingSongId && mediaPlayer != null) {
             int currentPosition = mediaPlayer.getCurrentPosition();
             int totalDuration = mediaPlayer.getDuration();
             displayTime = formatTime(currentPosition) + " / " + formatTime(totalDuration);
@@ -144,7 +144,7 @@ public class SongResponseAdapter extends RecyclerView.Adapter<SongResponseAdapte
         holder.txtDuration.setText(displayTime);
 
         // Set icon play hoặc pause
-        if (songResponse.getId() == playingSongId) {
+        if (song.getId() == playingSongId) {
             if (mediaPlayer != null && mediaPlayer.isPlaying()) {
                 holder.imgPlay.setImageResource(R.drawable.ic_pause_fill);
             } else {
@@ -159,7 +159,7 @@ public class SongResponseAdapter extends RecyclerView.Adapter<SongResponseAdapte
         Runnable updateTimeRunnable = new Runnable() {
             @Override
             public void run() {
-                if (mediaPlayer != null && mediaPlayer.isPlaying() && songResponse.getId() == playingSongId) {
+                if (mediaPlayer != null && mediaPlayer.isPlaying() && song.getId() == playingSongId) {
                     int currentPosition = mediaPlayer.getCurrentPosition();
                     int totalDuration = mediaPlayer.getDuration();
                     holder.txtDuration.setText(formatTime(currentPosition) + " / " + formatTime(totalDuration));
@@ -170,7 +170,7 @@ public class SongResponseAdapter extends RecyclerView.Adapter<SongResponseAdapte
 
         // Xử lý sự kiện click trên nút play
         holder.imgPlay.setOnClickListener(v -> {
-            if (songResponse.getId() == playingSongId) {
+            if (song.getId() == playingSongId) {
                 if (mediaPlayer != null) {
                     if (mediaPlayer.isPlaying()) {
                         mediaPlayer.pause();
@@ -201,9 +201,7 @@ public class SongResponseAdapter extends RecyclerView.Adapter<SongResponseAdapte
                 }
 
                 // Chuyển đổi SongResponse sang Song
-                Song song = convertToSong(songResponse);
-
-                String audioPath = songResponse.getAudioUrl();
+                String audioPath = song.getAudioUrl();
                 String audioUrl = "http://" + SERVER_HOST + ":" + SERVER_PORT + "/api/v1/song/file/load?fullUrl=" + audioPath;
 
                 mediaPlayer = new MediaPlayer();
@@ -212,7 +210,7 @@ public class SongResponseAdapter extends RecyclerView.Adapter<SongResponseAdapte
                     mediaPlayer.prepareAsync();
                     mediaPlayer.setOnPreparedListener(mp -> {
                         mp.start();
-                        playingSongId = songResponse.getId();
+                        playingSongId = song.getId();
                         currentPlayingHolder = holder;
                         holder.imgPlay.setImageResource(R.drawable.ic_pause_fill);
 
@@ -258,7 +256,7 @@ public class SongResponseAdapter extends RecyclerView.Adapter<SongResponseAdapte
         // Xử lý sự kiện long click trên item
         holder.songItem.setOnLongClickListener(view -> {
             if (onLongItemClickListener != null) {
-                onLongItemClickListener.onLongItemClick(convertToSong(songResponse), view);
+                onLongItemClickListener.onLongItemClick(song, view);
             }
             return true;
         });
@@ -269,7 +267,7 @@ public class SongResponseAdapter extends RecyclerView.Adapter<SongResponseAdapte
         return songList.size();
     }
 
-    public void updateSongs(List<SongResponse> newSongs) {
+    public void updateSongs(List<Song> newSongs) {
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new SongDiffCallback(songList, newSongs));
         songList.clear();
         if (newSongs != null) {
@@ -279,10 +277,10 @@ public class SongResponseAdapter extends RecyclerView.Adapter<SongResponseAdapte
     }
 
     private static class SongDiffCallback extends DiffUtil.Callback {
-        private final List<SongResponse> oldList;
-        private final List<SongResponse> newList;
+        private final List<Song> oldList;
+        private final List<Song> newList;
 
-        SongDiffCallback(List<SongResponse> oldList, List<SongResponse> newList) {
+        SongDiffCallback(List<Song> oldList, List<Song> newList) {
             this.oldList = oldList;
             this.newList = newList;
         }
@@ -304,8 +302,8 @@ public class SongResponseAdapter extends RecyclerView.Adapter<SongResponseAdapte
 
         @Override
         public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-            SongResponse oldSong = oldList.get(oldItemPosition);
-            SongResponse newSong = newList.get(newItemPosition);
+            Song oldSong = oldList.get(oldItemPosition);
+            Song newSong = newList.get(newItemPosition);
             return oldSong.getName().equals(newSong.getName()) &&
                     oldSong.getAuthorName().equals(newSong.getAuthorName()) &&
                     (oldSong.getSingerName() == null ? newSong.getSingerName() == null : oldSong.getSingerName().equals(newSong.getSingerName()));
@@ -313,17 +311,17 @@ public class SongResponseAdapter extends RecyclerView.Adapter<SongResponseAdapte
     }
 
     // Phương thức chuyển đổi SongResponse sang Song
-    private Song convertToSong(SongResponse songResponse) {
+    private Song convertToSong(Song inputSong) {
         Song song = new Song(); // Giả định Song có constructor mặc định
-        song.setId(songResponse.getId());
-        song.setName(songResponse.getName());
-        song.setAuthorName(songResponse.getAuthorName());
-        song.setSingerName(songResponse.getSingerName());
-        song.setAudioUrl(songResponse.getAudioUrl());
-        song.setCoverImageUrl(songResponse.getCoverImageUrl());
-        song.setLyrics(songResponse.getLyrics());
-        song.setPublic(songResponse.isPublic());
-        song.setDuration(songResponse.getDuration() * 1000); // Chuyển từ giây sang mili giây
+        song.setId(inputSong.getId());
+        song.setName(inputSong.getName());
+        song.setAuthorName(inputSong.getAuthorName());
+        song.setSingerName(inputSong.getSingerName());
+        song.setAudioUrl(inputSong.getAudioUrl());
+        song.setCoverImageUrl(inputSong.getCoverImageUrl());
+        song.setLyrics(inputSong.getLyrics());
+        song.setPublic(inputSong.isPublic());
+        song.setDuration(inputSong.getDuration() * 1000); // Chuyển từ giây sang mili giây
         return song;
     }
 }

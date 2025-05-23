@@ -3,6 +3,9 @@ package com.group06.music_app_mobile.application.adapters;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -73,30 +76,29 @@ public class DownloadedSongAdapter extends RecyclerView.Adapter<DownloadedSongAd
 
         // Xử lý nút 3 chấm (btnMore)
         holder.btnMore.setOnClickListener(v -> {
-            // Tạo menu popup
             PopupMenu popupMenu = new PopupMenu(context, holder.btnMore);
-            popupMenu.getMenu().add(0, 1, 0, "Play");
-            popupMenu.getMenu().add(0, 2, 0, "Delete");
+            popupMenu.getMenuInflater().inflate(R.menu.menu_song_options, popupMenu.getMenu());
 
-            // Xử lý sự kiện khi chọn menu item
-            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    int itemId = item.getItemId();
-                    if (itemId == 1) {
-                        // Play bài hát
-                        toPlayActivity(position);
-                        return true;
-                    } else if (itemId == 2) {
-                        // Xóa bài hát
-                        deleteSong(position);
-                        return true;
-                    }
-                    return false;
+            // Đổi màu chữ các item (dùng SpannableString)
+            for (int i = 0; i < popupMenu.getMenu().size(); i++) {
+                MenuItem item = popupMenu.getMenu().getItem(i);
+                SpannableString spanString = new SpannableString(item.getTitle());
+                spanString.setSpan(new ForegroundColorSpan(Color.WHITE), 0, spanString.length(), 0);
+                item.setTitle(spanString);
+            }
+
+            popupMenu.setOnMenuItemClickListener(item -> {
+                int itemId = item.getItemId();
+                if (itemId == R.id.action_play) {
+                    toPlayActivity(position);
+                    return true;
+                } else if (itemId == R.id.action_delete) {
+                    deleteSong(position);
+                    return true;
                 }
+                return false;
             });
 
-            // Hiển thị menu popup
             popupMenu.show();
         });
 
